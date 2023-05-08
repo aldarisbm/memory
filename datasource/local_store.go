@@ -1,6 +1,6 @@
 package datasource
 
 type DataSourcer interface {
-	GetDocument(key string) ([]byte, error)
-	StoreDocument(key string, document []byte) error
+	GetDocument(id string) ([]byte, error)
+	StoreDocument(id string, document []byte) error
 }
