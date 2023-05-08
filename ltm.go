@@ -19,7 +19,7 @@ func NewLTM(opts ...CallOptions) *LTM {
 	return &LTM{}
 }
 
-// StoreMessage stores a message in the LTM
+// StoreDocument stores a document in the LTM
 func (l *LTM) StoreDocument(document *Document) error {
 	embedding, err := l.embedder.EmbedDocument(document)
 	if err != nil {
@@ -34,7 +34,7 @@ func (l *LTM) StoreDocument(document *Document) error {
 	return nil
 }
 
-// RetrieveSimilarMessages retrieves similar messages from the LTM
+// RetrieveSimilarDocuments retrieves similar documents from the LTM
 func (l *LTM) RetrieveSimilarDocuments(document *Document) ([]*Document, error) {
 	embedding, err := l.embedder.EmbedDocument(document)
 	if err != nil {
