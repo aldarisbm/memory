@@ -20,23 +20,23 @@ func NewLTM(opts ...CallOptions) *LTM {
 }
 
 // StoreMessage stores a message in the LTM
-func (l *LTM) StoreMessage(s string) error {
-	embedding, err := l.embedder.EmbedDocument([]byte(s))
+func (l *LTM) StoreDocument(document *Document) error {
+	embedding, err := l.embedder.EmbedDocument(document)
 	if err != nil {
 		return fmt.Errorf("embedding message: %w", err)
 	}
 	if err := l.vectorStore.StoreVector(embedding); err != nil {
 		return fmt.Errorf("storing message vector: %w", err)
 	}
-	if err := l.datasource.StoreDocument([]byte(s)); err != nil {
+	if err := l.datasource.StoreDocument(document); err != nil {
 		return fmt.Errorf("storing message: %w", err)
 	}
 	return nil
 }
 
 // RetrieveSimilarMessages retrieves similar messages from the LTM
-func (l *LTM) RetrieveSimilarMessages(s string) ([]string, error) {
-	embedding, err := l.embedder.EmbedDocument([]byte(s))
+func (l *LTM) RetrieveSimilarDocuments(document *Document) ([]*Document, error) {
+	embedding, err := l.embedder.EmbedDocument(document)
 	if err != nil {
 		return nil, fmt.Errorf("embedding message: %w", err)
 	}
