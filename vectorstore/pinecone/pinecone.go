@@ -2,25 +2,21 @@ package pinecone
 
 import (
 	"github.com/aldarisbm/ltm/options"
-	"github.com/nekomeowww/go-pinecone"
+	pc "github.com/nekomeowww/go-pinecone"
 )
 
-type PineconeClient struct {
-	c         *pinecone.Client
+type Client struct {
+	c         *pc.Client
 	indexName string
 	namespace string
 }
 
-func NewPineconeClient(opts ...options.CallOptions) *PineconeClient {
+func NewClient(opts ...options.CallOptions) *Client {
 	return nil
 }
 
-func (p *PineconeClient) StoreVector(id string, vector []float32) {}
+func (p *Client) StoreVector(id string, vector []float32) {}
 
-func (p *PineconeClient) GetVector(id string) ([]float32, error) {
-	return nil, nil
-}
-
-func (p *PineconeClient) QueryVector(vector []float32, k int) ([]float32, error) {
+func (p *Client) QueryVector(vector []float32, k int) ([]float32, error) {
 	return nil, nil
 }

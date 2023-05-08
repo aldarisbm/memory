@@ -5,18 +5,18 @@ import (
 	"github.com/sashabaranov/go-openai"
 )
 
-type OpenAIEmbedder struct {
+type Embedder struct {
 	c *openai.Client
 }
 
-func NewOpenAIEmbedder(opts ...options.CallOptions) *OpenAIEmbedder {
-	return nil
+func NewOpenAIEmbedder(opts ...options.CallOptions) *Embedder {
+	return &Embedder{}
 }
 
-func (e *OpenAIEmbedder) EmbedDocument(document []byte) ([]float32, error) {
+func (e *Embedder) EmbedDocument(document []byte) ([]float32, error) {
 	return nil, nil
 }
 
-func (e *OpenAIEmbedder) EmbedDocuments(documents [][]byte) ([][]float32, error) {
+func (e *Embedder) EmbedDocuments(documents [][]byte) ([][]float32, error) {
 	return nil, nil
 }
