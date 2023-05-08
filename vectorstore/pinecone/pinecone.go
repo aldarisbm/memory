@@ -1,7 +1,7 @@
 package pinecone
 
 import (
-	"github.com/aldarisbm/ltm/options"
+	"github.com/aldarisbm/ltm"
 	pc "github.com/nekomeowww/go-pinecone"
 )
 
@@ -11,7 +11,7 @@ type Client struct {
 	namespace string
 }
 
-func NewClient(opts ...options.CallOptions) *Client {
+func NewClient(opts ...ltm.CallOptions) *Client {
 	return nil
 }
 

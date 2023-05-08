@@ -1,5 +1,6 @@
 package datasource
 
+// DataSourcer is an interface for data sources
 type DataSourcer interface {
 	// GetDocument returns the document with the given id
 	GetDocument(id string) ([]byte, error)

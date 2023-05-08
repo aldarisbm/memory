@@ -4,19 +4,18 @@ import (
 	"fmt"
 	"github.com/aldarisbm/ltm/datasource"
 	"github.com/aldarisbm/ltm/embeddings"
-	"github.com/aldarisbm/ltm/options"
 	"github.com/aldarisbm/ltm/vectorstore"
 )
 
 // LTM is a long-term memory for a chatbot
 type LTM struct {
-	embedder embeddings.Embedder
-	vectorDB vectorstore.VectorStorer
-	localDB  datasource.DataSourcer
+	embedder    embeddings.Embedder
+	vectorStore vectorstore.VectorStorer
+	datasource  datasource.DataSourcer
 }
 
 // NewLTM creates or loads a new LTM instance from the given options
-func NewLTM(opts ...options.CallOptions) *LTM {
+func NewLTM(opts ...CallOptions) *LTM {
 	return &LTM{}
 }
 
@@ -26,10 +25,10 @@ func (l *LTM) StoreMessage(s string) error {
 	if err != nil {
 		return fmt.Errorf("embedding message: %w", err)
 	}
-	if err := l.vectorDB.StoreVector(embedding); err != nil {
+	if err := l.vectorStore.StoreVector(embedding); err != nil {
 		return fmt.Errorf("storing message vector: %w", err)
 	}
-	if err := l.localDB.StoreDocument([]byte(s)); err != nil {
+	if err := l.datasource.StoreDocument([]byte(s)); err != nil {
 		return fmt.Errorf("storing message: %w", err)
 	}
 	return nil
@@ -41,11 +40,11 @@ func (l *LTM) RetrieveSimilarMessages(s string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("embedding message: %w", err)
 	}
-	ids, err := l.vectorDB.QueryVector(embedding, 10)
+	ids, err := l.vectorStore.QueryVector(embedding, 10)
 	if err != nil {
 		return nil, fmt.Errorf("querying vector: %w", err)
 	}
-	messages, err := l.localDB.GetDocuments(ids)
+	messages, err := l.datasource.GetDocuments(ids)
 	if err != nil {
 		return nil, fmt.Errorf("getting documents: %w", err)
 	}
