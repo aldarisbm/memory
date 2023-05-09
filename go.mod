@@ -3,8 +3,10 @@ module github.com/aldarisbm/ltm
 go 1.20
 
 require (
+	github.com/golang/protobuf v1.5.2
 	github.com/nekomeowww/go-pinecone v0.1.0
 	github.com/sashabaranov/go-openai v1.9.3
+	go.etcd.io/bbolt v1.3.7
 )
 
 require (
@@ -29,4 +31,5 @@ require (
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 	golang.org/x/tools v0.6.0 // indirect
+	google.golang.org/protobuf v1.28.1 // indirect
 )
