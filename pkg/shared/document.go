@@ -1,10 +1,13 @@
 package shared
 
-import "github.com/golang/protobuf/ptypes/timestamp"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
 type Document struct {
-	ID         string              `json:"id"`
-	Text       string              `json:"text"`
-	CreatedAt  timestamp.Timestamp `json:"created_at"`
-	LastReadAt timestamp.Timestamp `json:"last_read_at"`
+	ID         uuid.UUID `json:"id"`
+	Text       string    `json:"text"`
+	CreatedAt  time.Time `json:"created_at"`
+	LastReadAt time.Time `json:"last_read_at"`
 }

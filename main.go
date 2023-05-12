@@ -3,28 +3,26 @@ package main
 import (
 	"github.com/aldarisbm/ltm/pkg/datasource/boltdb"
 	"github.com/aldarisbm/ltm/pkg/shared"
-	"github.com/golang/protobuf/ptypes/timestamp"
+	"github.com/google/uuid"
+	"time"
 )
 
 func main() {
 
+	id := uuid.New()
 	doc := shared.Document{
-		ID:         "321",
+		ID:         id,
 		Text:       "mi mama no me mima",
-		CreatedAt:  timestamp.Timestamp{},
-		LastReadAt: timestamp.Timestamp{},
+		CreatedAt:  time.Now(),
+		LastReadAt: time.Now(),
 	}
-
-	localStore := boltdb.NewLocalStore(
-		boltdb.WithPath("boltdb"),
-		boltdb.WithBucket("ltm"),
-	)
+	localStore := boltdb.NewLocalStore()
 
 	err := localStore.StoreDocument(&doc)
 	if err != nil {
 		panic(err)
 	}
-	s, err := localStore.GetDocument("321")
+	s, err := localStore.GetDocument(id)
 	if err != nil {
 		panic(err)
 	}
