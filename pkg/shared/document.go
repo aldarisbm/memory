@@ -1,4 +1,4 @@
-package ltm
+package shared
 
 import "github.com/golang/protobuf/ptypes/timestamp"
 

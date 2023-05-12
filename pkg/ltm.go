@@ -1,10 +1,11 @@
-package ltm
+package pkg
 
 import (
 	"fmt"
-	"github.com/aldarisbm/ltm/datasource"
-	"github.com/aldarisbm/ltm/embeddings"
-	"github.com/aldarisbm/ltm/vectorstore"
+	"github.com/aldarisbm/ltm/pkg/datasource"
+	"github.com/aldarisbm/ltm/pkg/embeddings"
+	"github.com/aldarisbm/ltm/pkg/shared"
+	"github.com/aldarisbm/ltm/pkg/vectorstore"
 )
 
 // LTM is a long-term memory for a chatbot
@@ -20,7 +21,7 @@ func NewLTM(opts ...CallOptions) *LTM {
 }
 
 // StoreDocument stores a document in the LTM
-func (l *LTM) StoreDocument(document *Document) error {
+func (l *LTM) StoreDocument(document *shared.Document) error {
 	embedding, err := l.embedder.EmbedDocument(document)
 	if err != nil {
 		return fmt.Errorf("embedding message: %w", err)
@@ -35,7 +36,7 @@ func (l *LTM) StoreDocument(document *Document) error {
 }
 
 // RetrieveSimilarDocuments retrieves similar documents from the LTM
-func (l *LTM) RetrieveSimilarDocuments(document *Document) ([]*Document, error) {
+func (l *LTM) RetrieveSimilarDocuments(document *shared.Document) ([]*shared.Document, error) {
 	embedding, err := l.embedder.EmbedDocument(document)
 	if err != nil {
 		return nil, fmt.Errorf("embedding message: %w", err)

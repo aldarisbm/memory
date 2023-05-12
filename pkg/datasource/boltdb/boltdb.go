@@ -3,7 +3,7 @@ package boltdb
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/aldarisbm/ltm"
+	"github.com/aldarisbm/ltm/shared"
 	bolt "go.etcd.io/bbolt"
 )
 
@@ -40,8 +40,8 @@ func NewLocalStore(path, bucketName string) *LocalStore {
 	return ls
 }
 
-func (l *LocalStore) GetDocument(id string) (*ltm.Document, error) {
-	var doc ltm.Document
+func (l *LocalStore) GetDocument(id string) (*shared.Document, error) {
+	var doc shared.Document
 	err := l.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(l.bucketName))
 		v := b.Get([]byte(id))
@@ -57,8 +57,8 @@ func (l *LocalStore) GetDocument(id string) (*ltm.Document, error) {
 	return &doc, nil
 }
 
-func (l *LocalStore) GetDocuments(ids []string) ([]*ltm.Document, error) {
-	var docs []*ltm.Document
+func (l *LocalStore) GetDocuments(ids []string) ([]*shared.Document, error) {
+	var docs []*shared.Document
 	for _, id := range ids {
 		doc, err := l.GetDocument(id)
 		if err != nil {
@@ -69,7 +69,7 @@ func (l *LocalStore) GetDocuments(ids []string) ([]*ltm.Document, error) {
 	return docs, nil
 }
 
-func (l *LocalStore) StoreDocument(document *ltm.Document) error {
+func (l *LocalStore) StoreDocument(document *shared.Document) error {
 	doc, err := json.Marshal(&document)
 	if err != nil {
 		return fmt.Errorf("marshaling document: %s", err)
