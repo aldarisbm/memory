@@ -3,7 +3,7 @@ package boltdb
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/aldarisbm/ltm/shared"
+	"github.com/aldarisbm/ltm/pkg/shared"
 	bolt "go.etcd.io/bbolt"
 )
 
@@ -12,18 +12,14 @@ type LocalStore struct {
 	bucketName string
 }
 
-type Options struct {
-	Path       string
-	BucketName string
-}
-
-func NewLocalStore(path, bucketName string) *LocalStore {
-	dbm, err := bolt.Open(path, 0600, nil)
+func NewLocalStore(opts ...CallOptions) *LocalStore {
+	o := applyCallOptions(opts)
+	dbm, err := bolt.Open(o.path, 0600, nil)
 	if err != nil {
 		panic(err)
 	}
 	err = dbm.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists([]byte(bucketName))
+		_, err := tx.CreateBucketIfNotExists([]byte(o.bucket))
 		if err != nil {
 			return err
 		}
@@ -35,7 +31,7 @@ func NewLocalStore(path, bucketName string) *LocalStore {
 
 	ls := &LocalStore{
 		db:         dbm,
-		bucketName: bucketName,
+		bucketName: o.bucket,
 	}
 	return ls
 }

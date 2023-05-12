@@ -16,8 +16,12 @@ type LTM struct {
 }
 
 // NewLTM creates or loads a new LTM instance from the given options
-func NewLTM(opts ...CallOptions) *LTM {
-	return &LTM{}
+func NewLTM(embedder embeddings.Embedder, storer vectorstore.VectorStorer, sourcer datasource.DataSourcer) *LTM {
+	return &LTM{
+		embedder:    embedder,
+		vectorStore: storer,
+		datasource:  sourcer,
+	}
 }
 
 // StoreDocument stores a document in the LTM

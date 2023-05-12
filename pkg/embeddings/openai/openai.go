@@ -1,7 +1,6 @@
 package openai
 
 import (
-	"github.com/aldarisbm/ltm"
 	"github.com/sashabaranov/go-openai"
 )
 
@@ -9,7 +8,7 @@ type Embedder struct {
 	c *openai.Client
 }
 
-func NewOpenAIEmbedder(opts ...ltm.CallOptions) *Embedder {
+func NewOpenAIEmbedder(opts ...CallOptions) *Embedder {
 	return &Embedder{}
 }
 
