@@ -21,7 +21,7 @@ func NewOpenAIEmbedder(opts ...CallOptions) *Embedder {
 	}
 }
 
-func (e *Embedder) EmbedDocument(document shared.Document) ([]float32, error) {
+func (e *Embedder) EmbedDocument(document *shared.Document) ([]float32, error) {
 	ctx := context.Background()
 	req := goopenai.EmbeddingRequest{
 		Input: []string{document.Text},
@@ -34,7 +34,7 @@ func (e *Embedder) EmbedDocument(document shared.Document) ([]float32, error) {
 	return resp.Data[0].Embedding, nil
 }
 
-func (e *Embedder) EmbedDocuments(documents []shared.Document) ([][]float32, error) {
+func (e *Embedder) EmbedDocuments(documents []*shared.Document) ([][]float32, error) {
 	ctx := context.Background()
 	req := goopenai.EmbeddingRequest{
 		Input: make([]string, len(documents)),
