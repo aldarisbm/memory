@@ -6,6 +6,8 @@ import (
 	"github.com/aldarisbm/ltm/pkg/embeddings"
 	"github.com/aldarisbm/ltm/pkg/shared"
 	"github.com/aldarisbm/ltm/pkg/vectorstore"
+	"github.com/google/uuid"
+	"time"
 )
 
 // LTM is a long-term memory for a chatbot
@@ -34,7 +36,8 @@ func (l *LTM) StoreDocument(document *shared.Document) error {
 	if err != nil {
 		return fmt.Errorf("embedding message: %w", err)
 	}
-	if err := l.vectorStore.StoreVector(embedding); err != nil {
+	document.Vector = embedding
+	if err := l.vectorStore.StoreVector(document); err != nil {
 		return fmt.Errorf("calling store vector: %w", err)
 	}
 	if err := l.datasource.StoreDocument(document); err != nil {
@@ -44,12 +47,12 @@ func (l *LTM) StoreDocument(document *shared.Document) error {
 }
 
 // RetrieveSimilarDocumentsByText retrieves similar documents from the LTM
-func (l *LTM) RetrieveSimilarDocumentsByText(documentText string, topK int64) ([]*shared.Document, error) {
+func (l *LTM) RetrieveSimilarDocumentsByText(text string, topK int64) ([]*shared.Document, error) {
 	const TopKDefault int64 = 10
 	if topK == 0 {
 		topK = TopKDefault
 	}
-	embedding, err := l.embedder.EmbedDocumentText(documentText)
+	embedding, err := l.embedder.EmbedDocumentText(text)
 	if err != nil {
 		return nil, fmt.Errorf("embedding message: %w", err)
 	}
@@ -63,4 +66,14 @@ func (l *LTM) RetrieveSimilarDocumentsByText(documentText string, topK int64) ([
 	}
 
 	return documents, nil
+}
+
+func (l *LTM) NewDocument(text string, user string) *shared.Document {
+	return &shared.Document{
+		ID:         uuid.New(),
+		Text:       text,
+		User:       user,
+		CreatedAt:  time.Now(),
+		LastReadAt: time.Now(),
+	}
 }

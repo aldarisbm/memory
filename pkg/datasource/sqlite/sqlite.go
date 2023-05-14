@@ -38,6 +38,8 @@ func (l *LocalStorer) Close() error {
 func (l *LocalStorer) GetDocument(id uuid.UUID) (*shared.Document, error) {
 	var doc shared.Document
 
+	di := id.String()
+	fmt.Println("id", di)
 	stmt, err := l.db.Prepare("SELECT id, text, created_at, last_read_at FROM documents WHERE id=?")
 	if err != nil {
 		return nil, err

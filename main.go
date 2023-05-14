@@ -5,11 +5,8 @@ import (
 	"github.com/aldarisbm/ltm/pkg"
 	"github.com/aldarisbm/ltm/pkg/datasource/sqlite"
 	"github.com/aldarisbm/ltm/pkg/embeddings/openai"
-	"github.com/aldarisbm/ltm/pkg/shared"
 	"github.com/aldarisbm/ltm/pkg/vectorstore/pinecone"
-	"github.com/google/uuid"
 	"os"
-	"time"
 )
 
 func main() {
@@ -28,19 +25,15 @@ func main() {
 	ls := sqlite.NewLocalStorer()
 	ltm := pkg.NewLTM(ls, emb, vs)
 
-	id := uuid.New()
-
-	text := "mi mama me mima"
-	if err := ltm.StoreDocument(&shared.Document{
-		ID:         id,
-		Text:       text,
-		CreatedAt:  time.Now(),
-		LastReadAt: time.Now(),
-	}); err != nil {
+	text := "You should always trust the puppers"
+	user := "my_user"
+	doc := ltm.NewDocument(text, user)
+	if err := ltm.StoreDocument(doc); err != nil {
 		panic(err)
 	}
 
-	docs, err := ltm.RetrieveSimilarDocumentsByText(text, 1)
+	q := "who should i trust?"
+	docs, err := ltm.RetrieveSimilarDocumentsByText(q, 1)
 	if err != nil {
 		panic(err)
 	}

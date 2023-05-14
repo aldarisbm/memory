@@ -3,6 +3,7 @@ package pc
 import (
 	"context"
 	"fmt"
+	"github.com/aldarisbm/ltm/pkg/shared"
 	"github.com/aldarisbm/ltm/pkg/vectorstore"
 	"github.com/google/uuid"
 	"github.com/nekomeowww/go-pinecone"
@@ -32,14 +33,14 @@ func NewStorer(opts ...CallOptions) *Storer {
 	}
 }
 
-func (p *Storer) StoreVector(vector []float32) error {
-	id := uuid.New()
+func (p *Storer) StoreVector(doc *shared.Document) error {
 	ctx := context.Background()
 	req := pinecone.UpsertVectorsParams{
 		Vectors: []*pinecone.Vector{
 			{
-				ID:     id.String(),
-				Values: vector,
+				ID:       doc.ID.String(),
+				Values:   doc.Vector,
+				Metadata: doc.Metadata,
 			},
 		},
 		Namespace: p.namespace,
@@ -79,7 +80,6 @@ func (p *Storer) QueryVector(vector []float32, k int64) ([]uuid.UUID, error) {
 		}
 		uuids = append(uuids, id)
 	}
-	// TODO The return should be changed to something more generic
 	return uuids, nil
 }
 
