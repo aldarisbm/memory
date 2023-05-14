@@ -1,8 +1,8 @@
-package openai
+package oai
 
 import (
 	"context"
-	"github.com/aldarisbm/ltm/pkg/shared"
+	"github.com/aldarisbm/ltm/pkg/embeddings"
 	goopenai "github.com/sashabaranov/go-openai"
 )
 
@@ -22,10 +22,10 @@ func NewOpenAIEmbedder(opts ...CallOptions) *Embedder {
 	}
 }
 
-func (e *Embedder) EmbedDocument(document *shared.Document) ([]float32, error) {
+func (e *Embedder) EmbedDocumentText(text string) ([]float32, error) {
 	ctx := context.Background()
 	req := goopenai.EmbeddingRequest{
-		Input: []string{document.Text},
+		Input: []string{text},
 		Model: e.model,
 	}
 	resp, err := e.c.CreateEmbeddings(ctx, req)
@@ -35,14 +35,14 @@ func (e *Embedder) EmbedDocument(document *shared.Document) ([]float32, error) {
 	return resp.Data[0].Embedding, nil
 }
 
-func (e *Embedder) EmbedDocuments(documents []*shared.Document) ([][]float32, error) {
+func (e *Embedder) EmbedDocuments(texts []string) ([][]float32, error) {
 	ctx := context.Background()
 	req := goopenai.EmbeddingRequest{
-		Input: make([]string, len(documents)),
+		Input: make([]string, len(texts)),
 		Model: e.model,
 	}
-	for i, document := range documents {
-		req.Input[i] = document.Text
+	for i, text := range texts {
+		req.Input[i] = text
 	}
 	resp, err := e.c.CreateEmbeddings(ctx, req)
 	if err != nil {
@@ -54,3 +54,6 @@ func (e *Embedder) EmbedDocuments(documents []*shared.Document) ([][]float32, er
 	}
 	return embeddings, nil
 }
+
+// Ensure Embedder implements embeddings.Embedder
+var _ embeddings.Embedder = (*Embedder)(nil)

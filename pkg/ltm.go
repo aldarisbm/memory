@@ -16,22 +16,26 @@ type LTM struct {
 }
 
 // NewLTM creates or loads a new LTM instance from the given options
-func NewLTM(dataSourcer datasource.DataSourcer, embedder embeddings.Embedder, storer vectorstore.VectorStorer) *LTM {
+func NewLTM(dataSourcer datasource.DataSourcer, embedder embeddings.Embedder, vectorStorer vectorstore.VectorStorer) *LTM {
+	if dataSourcer == nil || embedder == nil || vectorStorer == nil {
+		panic("dataSourcer, embedder and vectorStorer must not be nil")
+	}
+
 	return &LTM{
 		embedder:    embedder,
-		vectorStore: storer,
+		vectorStore: vectorStorer,
 		datasource:  dataSourcer,
 	}
 }
 
 // StoreDocument stores a document in the LTM
 func (l *LTM) StoreDocument(document *shared.Document) error {
-	embedding, err := l.embedder.EmbedDocument(document)
+	embedding, err := l.embedder.EmbedDocumentText(document.Text)
 	if err != nil {
 		return fmt.Errorf("embedding message: %w", err)
 	}
 	if err := l.vectorStore.StoreVector(embedding); err != nil {
-		return fmt.Errorf("storing message vector: %w", err)
+		return fmt.Errorf("calling store vector: %w", err)
 	}
 	if err := l.datasource.StoreDocument(document); err != nil {
 		return fmt.Errorf("storing message: %w", err)
@@ -39,13 +43,13 @@ func (l *LTM) StoreDocument(document *shared.Document) error {
 	return nil
 }
 
-// RetrieveSimilarDocuments retrieves similar documents from the LTM
-func (l *LTM) RetrieveSimilarDocuments(document *shared.Document, topK int64) ([]*shared.Document, error) {
+// RetrieveSimilarDocumentsByText retrieves similar documents from the LTM
+func (l *LTM) RetrieveSimilarDocumentsByText(documentText string, topK int64) ([]*shared.Document, error) {
 	const TopKDefault int64 = 10
 	if topK == 0 {
 		topK = TopKDefault
 	}
-	embedding, err := l.embedder.EmbedDocument(document)
+	embedding, err := l.embedder.EmbedDocumentText(documentText)
 	if err != nil {
 		return nil, fmt.Errorf("embedding message: %w", err)
 	}
@@ -58,6 +62,5 @@ func (l *LTM) RetrieveSimilarDocuments(document *shared.Document, topK int64) ([
 		return nil, fmt.Errorf("getting documents: %w", err)
 	}
 
-	// here we should convert the documents into something standardized
 	return documents, nil
 }

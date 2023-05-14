@@ -27,7 +27,8 @@ func NewStorer(opts ...CallOptions) *Storer {
 		panic(err)
 	}
 	return &Storer{
-		client: c,
+		client:    c,
+		namespace: o.namespace,
 	}
 }
 
