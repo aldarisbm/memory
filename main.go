@@ -16,7 +16,8 @@ func main() {
 		CreatedAt:  time.Now(),
 		LastReadAt: time.Now(),
 	}
-	localStore := boltdb.NewLocalStore()
+	localStore := boltdb.NewLocalStorer()
+	defer localStore.Close()
 
 	err := localStore.StoreDocument(&doc)
 	if err != nil {

@@ -16,11 +16,11 @@ type LTM struct {
 }
 
 // NewLTM creates or loads a new LTM instance from the given options
-func NewLTM(embedder embeddings.Embedder, storer vectorstore.VectorStorer, sourcer datasource.DataSourcer) *LTM {
+func NewLTM(embedder embeddings.Embedder, storer vectorstore.VectorStorer, dataSourcer datasource.DataSourcer) *LTM {
 	return &LTM{
 		embedder:    embedder,
 		vectorStore: storer,
-		datasource:  sourcer,
+		datasource:  dataSourcer,
 	}
 }
 
@@ -49,11 +49,11 @@ func (l *LTM) RetrieveSimilarDocuments(document *shared.Document) ([]*shared.Doc
 	if err != nil {
 		return nil, fmt.Errorf("querying vector: %w", err)
 	}
-	messages, err := l.datasource.GetDocuments(ids)
+	documents, err := l.datasource.GetDocuments(ids)
 	if err != nil {
 		return nil, fmt.Errorf("getting documents: %w", err)
 	}
 
-	// here we should convert the documents into somethign standardized
-	return messages, nil
+	// here we should convert the documents into something standardized
+	return documents, nil
 }

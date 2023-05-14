@@ -3,17 +3,18 @@ package boltdb
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/aldarisbm/ltm/pkg/datasource"
 	"github.com/aldarisbm/ltm/pkg/shared"
 	"github.com/google/uuid"
 	bolt "go.etcd.io/bbolt"
 )
 
-type LocalStore struct {
+type LocalStorer struct {
 	db         *bolt.DB
 	bucketName string
 }
 
-func NewLocalStore(opts ...CallOptions) *LocalStore {
+func NewLocalStorer(opts ...CallOptions) *LocalStorer {
 	o := applyCallOptions(opts, options{
 		path:   "localdb",
 		bucket: "ltm",
@@ -33,14 +34,18 @@ func NewLocalStore(opts ...CallOptions) *LocalStore {
 		panic(err)
 	}
 
-	ls := &LocalStore{
+	ls := &LocalStorer{
 		db:         dbm,
 		bucketName: o.bucket,
 	}
 	return ls
 }
 
-func (l *LocalStore) GetDocument(id uuid.UUID) (*shared.Document, error) {
+func (l *LocalStorer) Close() error {
+	return l.db.Close()
+}
+
+func (l *LocalStorer) GetDocument(id uuid.UUID) (*shared.Document, error) {
 	var doc shared.Document
 	err := l.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(l.bucketName))
@@ -57,7 +62,7 @@ func (l *LocalStore) GetDocument(id uuid.UUID) (*shared.Document, error) {
 	return &doc, nil
 }
 
-func (l *LocalStore) GetDocuments(ids []uuid.UUID) ([]*shared.Document, error) {
+func (l *LocalStorer) GetDocuments(ids []uuid.UUID) ([]*shared.Document, error) {
 	var docs []*shared.Document
 	for _, id := range ids {
 		doc, err := l.GetDocument(id)
@@ -69,7 +74,7 @@ func (l *LocalStore) GetDocuments(ids []uuid.UUID) ([]*shared.Document, error) {
 	return docs, nil
 }
 
-func (l *LocalStore) StoreDocument(document *shared.Document) error {
+func (l *LocalStorer) StoreDocument(document *shared.Document) error {
 	doc, err := json.Marshal(&document)
 	if err != nil {
 		return fmt.Errorf("marshaling document: %s", err)
@@ -84,3 +89,6 @@ func (l *LocalStore) StoreDocument(document *shared.Document) error {
 	}
 	return nil
 }
+
+// Ensure LocalStorer implements DataSourcer
+var _ datasource.DataSourcer = (*LocalStorer)(nil)

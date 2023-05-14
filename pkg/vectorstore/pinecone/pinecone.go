@@ -3,16 +3,17 @@ package pinecone
 import (
 	"context"
 	"fmt"
+	"github.com/aldarisbm/ltm/pkg/vectorstore"
 	"github.com/google/uuid"
 	pc "github.com/nekomeowww/go-pinecone"
 )
 
-type PineconeStore struct {
+type Storer struct {
 	client    *pc.IndexClient
 	namespace string
 }
 
-func NewPineconeStore(opts ...CallOptions) *PineconeStore {
+func NewStorer(opts ...CallOptions) *Storer {
 	o := applyCallOptions(opts, options{
 		namespace: "ltmllm",
 	})
@@ -25,12 +26,13 @@ func NewPineconeStore(opts ...CallOptions) *PineconeStore {
 	if err != nil {
 		panic(err)
 	}
-	return &PineconeStore{
+	return &Storer{
 		client: c,
 	}
 }
 
-func (p *PineconeStore) StoreVector(id uuid.UUID, vector []float32) error {
+func (p *Storer) StoreVector(vector []float32) error {
+	id := uuid.New()
 	ctx := context.Background()
 	req := pc.UpsertVectorsParams{
 		Vectors: []*pc.Vector{
@@ -52,8 +54,7 @@ func (p *PineconeStore) StoreVector(id uuid.UUID, vector []float32) error {
 	return nil
 }
 
-// The return should be changed to something more generic
-func (p *PineconeStore) QueryVector(vector []float32, k int64) ([]uuid.UUID, error) {
+func (p *Storer) QueryVector(vector []float32, k int64) ([]uuid.UUID, error) {
 	ctx := context.Background()
 	req := pc.QueryParams{
 		Vector:    vector,
@@ -77,5 +78,8 @@ func (p *PineconeStore) QueryVector(vector []float32, k int64) ([]uuid.UUID, err
 		}
 		uuids = append(uuids, id)
 	}
+	// TODO The return should be changed to something more generic
 	return uuids, nil
 }
+
+var _ vectorstore.VectorStorer = (*Storer)(nil)
