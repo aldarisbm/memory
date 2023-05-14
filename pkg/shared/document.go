@@ -6,8 +6,8 @@ import (
 )
 
 type Document struct {
-	User       string         `json:"user"`
 	ID         uuid.UUID      `json:"id"`
+	User       string         `json:"user"`
 	Text       string         `json:"text"`
 	CreatedAt  time.Time      `json:"created_at"`
 	LastReadAt time.Time      `json:"last_read_at"`

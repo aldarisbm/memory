@@ -21,9 +21,12 @@ const MarkSchemaCreatedQuery = `
 const CreateTableSchema = `
 		CREATE TABLE documents (
 		    "id" uuid NOT NULL PRIMARY KEY,
+			"user" TEXT,
 		    "text" TEXT,
 		    "created_at" TIMESTAMP,
-		    "last_read_at" TIMESTAMP
+		    "last_read_at" TIMESTAMP,
+		    "vector" BLOB,
+		    "metadata" BLOB
 		);
 `
 

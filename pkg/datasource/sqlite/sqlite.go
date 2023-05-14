@@ -2,6 +2,7 @@ package sqlite
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"github.com/aldarisbm/ltm/pkg/datasource"
 	"github.com/aldarisbm/ltm/pkg/shared"
@@ -38,19 +39,25 @@ func (l *LocalStorer) Close() error {
 func (l *LocalStorer) GetDocument(id uuid.UUID) (*shared.Document, error) {
 	var doc shared.Document
 
-	di := id.String()
-	fmt.Println("id", di)
-	stmt, err := l.db.Prepare("SELECT id, text, created_at, last_read_at FROM documents WHERE id=?")
+	stmt, err := l.db.Prepare("SELECT id, user, text, created_at, last_read_at, vector, metadata FROM documents WHERE id=?")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 
 	row := stmt.QueryRow(id)
-	err = row.Scan(&doc.ID, &doc.Text, &doc.CreatedAt, &doc.LastReadAt)
+	var metadataBytes, vectorBytes []byte
+	err = row.Scan(&doc.ID, &doc.User, &doc.Text, &doc.CreatedAt, &doc.LastReadAt, &vectorBytes, &metadataBytes)
 	if err != nil {
 		return nil, fmt.Errorf("scanning document: %s", err)
 	}
+	if err := json.Unmarshal(metadataBytes, &doc.Metadata); err != nil {
+		return nil, fmt.Errorf("unmarshaling metadata: %s", err)
+	}
+	if err := json.Unmarshal(vectorBytes, &doc.Vector); err != nil {
+		return nil, fmt.Errorf("unmarshaling vector: %s", err)
+	}
+
 	return &doc, nil
 }
 
@@ -69,12 +76,20 @@ func (l *LocalStorer) GetDocuments(ids []uuid.UUID) ([]*shared.Document, error) 
 }
 
 func (l *LocalStorer) StoreDocument(doc *shared.Document) error {
-	stmt, err := l.db.Prepare("INSERT INTO documents (id, text, created_at, last_read_at) VALUES (?, ?, ?, ?)")
+	stmt, err := l.db.Prepare("INSERT INTO documents (id, user,  text, created_at, last_read_at, vector, metadata) VALUES (?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return fmt.Errorf("preparing statement: %s", err)
 	}
 
-	res, err := stmt.Exec(doc.ID, doc.Text, doc.CreatedAt, doc.LastReadAt)
+	vector, err := json.Marshal(doc.Vector)
+	if err != nil {
+		return fmt.Errorf("marshaling vector: %s", err)
+	}
+	metadata, err := json.Marshal(doc.Metadata)
+	if err != nil {
+		return fmt.Errorf("marshaling metadata: %s", err)
+	}
+	res, err := stmt.Exec(doc.ID, doc.User, doc.Text, doc.CreatedAt, doc.LastReadAt, vector, metadata)
 	if err != nil {
 		return fmt.Errorf("inserting document: %s", err)
 	}
