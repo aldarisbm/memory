@@ -37,21 +37,25 @@ func (l *LocalStorer) Close() error {
 
 func (l *LocalStorer) GetDocument(id uuid.UUID) (*shared.Document, error) {
 	var doc shared.Document
-	stmt, err := l.db.Prepare("SELECT * FROM documents WHERE id=?")
+
+	stmt, err := l.db.Prepare("SELECT id, text, created_at, last_read_at FROM documents WHERE id=?")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 
-	err = l.db.QueryRow(id.String()).Scan(&doc)
+	row := stmt.QueryRow(id)
+	err = row.Scan(&doc.ID, &doc.Text, &doc.CreatedAt, &doc.LastReadAt)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("scanning document: %s", err)
 	}
 	return &doc, nil
 }
 
 func (l *LocalStorer) GetDocuments(ids []uuid.UUID) ([]*shared.Document, error) {
+	// TODO should probably do this in a single query
 	var docs []*shared.Document
+
 	for _, id := range ids {
 		doc, err := l.GetDocument(id)
 		if err != nil {

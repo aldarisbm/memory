@@ -3,7 +3,6 @@ package sqlite
 import (
 	"database/sql"
 	"fmt"
-	"os"
 )
 
 const CheckSchemaExistsQuery = `
@@ -18,6 +17,15 @@ const MarkSchemaCreatedQuery = `
 		);
 		INSERT INTO schema_info (id) VALUES (1);
 	`
+
+const CreateTableSchema = `
+		CREATE TABLE documents (
+		    "id" uuid NOT NULL PRIMARY KEY,
+		    "text" TEXT,
+		    "created_at" TIMESTAMP,
+		    "last_read_at" TIMESTAMP
+		);
+`
 
 func createTable(path string) (*sql.DB, error) {
 	db, err := sql.Open("sqlite3", path)
@@ -42,11 +50,7 @@ func createTable(path string) (*sql.DB, error) {
 }
 
 func createSchema(db *sql.DB) error {
-	schema, err := os.ReadFile("schema.sql")
-	if err != nil {
-		return fmt.Errorf("reading schema file: %w", err)
-	}
-	_, err = db.Exec(string(schema))
+	_, err := db.Exec(CreateTableSchema)
 	if err != nil {
 		return fmt.Errorf("executing SQL statement: %w", err)
 	}
