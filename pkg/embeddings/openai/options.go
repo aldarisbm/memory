@@ -3,8 +3,8 @@ package openai
 import goopenai "github.com/sashabaranov/go-openai"
 
 type options struct {
-	apiKey         string
-	embeddingModel goopenai.EmbeddingModel
+	apiKey string
+	model  goopenai.EmbeddingModel
 }
 
 type CallOptions struct {
@@ -28,6 +28,14 @@ func WithApiKey(apiKey string) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
 			o.apiKey = apiKey
+		},
+	}
+}
+
+func WithModel(model goopenai.EmbeddingModel) CallOptions {
+	return CallOptions{
+		applyFunc: func(o *options) {
+			o.model = model
 		},
 	}
 }

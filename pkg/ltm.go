@@ -16,7 +16,7 @@ type LTM struct {
 }
 
 // NewLTM creates or loads a new LTM instance from the given options
-func NewLTM(embedder embeddings.Embedder, storer vectorstore.VectorStorer, dataSourcer datasource.DataSourcer) *LTM {
+func NewLTM(dataSourcer datasource.DataSourcer, embedder embeddings.Embedder, storer vectorstore.VectorStorer) *LTM {
 	return &LTM{
 		embedder:    embedder,
 		vectorStore: storer,
@@ -40,12 +40,16 @@ func (l *LTM) StoreDocument(document *shared.Document) error {
 }
 
 // RetrieveSimilarDocuments retrieves similar documents from the LTM
-func (l *LTM) RetrieveSimilarDocuments(document *shared.Document) ([]*shared.Document, error) {
+func (l *LTM) RetrieveSimilarDocuments(document *shared.Document, topK int64) ([]*shared.Document, error) {
+	const TopKDefault int64 = 10
+	if topK == 0 {
+		topK = TopKDefault
+	}
 	embedding, err := l.embedder.EmbedDocument(document)
 	if err != nil {
 		return nil, fmt.Errorf("embedding message: %w", err)
 	}
-	ids, err := l.vectorStore.QueryVector(embedding, 10)
+	ids, err := l.vectorStore.QueryVector(embedding, topK)
 	if err != nil {
 		return nil, fmt.Errorf("querying vector: %w", err)
 	}

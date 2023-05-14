@@ -1,31 +1,27 @@
 package main
 
 import (
+	"github.com/aldarisbm/ltm/pkg"
 	"github.com/aldarisbm/ltm/pkg/datasource/sqlite"
-	"github.com/aldarisbm/ltm/pkg/shared"
-	"github.com/google/uuid"
-	"time"
+	"github.com/aldarisbm/ltm/pkg/embeddings/openai"
+	"github.com/aldarisbm/ltm/pkg/vectorstore/pinecone"
+	"os"
 )
 
 func main() {
 
-	id := uuid.New()
-	doc := shared.Document{
-		ID:         id,
-		Text:       "mi mama si me mima",
-		CreatedAt:  time.Now(),
-		LastReadAt: time.Now(),
-	}
-	localStore := sqlite.NewLocalStorer()
-	defer localStore.Close()
+	vs := pc.NewStorer(
+		pc.WithApiKey(os.Getenv("PINECONE_API_KEY")),
+		pc.WithIndexName(os.Getenv("PINECONE_INDEX_NAME")),
+		pc.WithProjectName(os.Getenv("PINECONE_PROJECT_NAME")),
+		pc.WithEnvironment(os.Getenv("PINECONE_ENVIRONMENT")),
+	)
 
-	err := localStore.StoreDocument(&doc)
-	if err != nil {
-		panic(err)
-	}
-	s, err := localStore.GetDocument(id)
-	if err != nil {
-		panic(err)
-	}
-	println(s.Text)
+	emb := openai.NewOpenAIEmbedder(
+		openai.WithApiKey(os.Getenv("OPENAI_API_KEY")),
+	)
+
+	ls := sqlite.NewLocalStorer()
+	ltm := pkg.NewLTM(ls, emb, vs)
+
 }

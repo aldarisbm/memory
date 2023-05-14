@@ -1,15 +1,15 @@
-package pinecone
+package pc
 
 import (
 	"context"
 	"fmt"
 	"github.com/aldarisbm/ltm/pkg/vectorstore"
 	"github.com/google/uuid"
-	pc "github.com/nekomeowww/go-pinecone"
+	"github.com/nekomeowww/go-pinecone"
 )
 
 type Storer struct {
-	client    *pc.IndexClient
+	client    *pinecone.IndexClient
 	namespace string
 }
 
@@ -17,11 +17,11 @@ func NewStorer(opts ...CallOptions) *Storer {
 	o := applyCallOptions(opts, options{
 		namespace: "ltmllm",
 	})
-	c, err := pc.NewIndexClient(
-		pc.WithAPIKey(o.apiKey),
-		pc.WithIndexName(o.indexName),
-		pc.WithEnvironment(o.environment),
-		pc.WithProjectName(o.projectName),
+	c, err := pinecone.NewIndexClient(
+		pinecone.WithAPIKey(o.apiKey),
+		pinecone.WithIndexName(o.indexName),
+		pinecone.WithEnvironment(o.environment),
+		pinecone.WithProjectName(o.projectName),
 	)
 	if err != nil {
 		panic(err)
@@ -34,8 +34,8 @@ func NewStorer(opts ...CallOptions) *Storer {
 func (p *Storer) StoreVector(vector []float32) error {
 	id := uuid.New()
 	ctx := context.Background()
-	req := pc.UpsertVectorsParams{
-		Vectors: []*pc.Vector{
+	req := pinecone.UpsertVectorsParams{
+		Vectors: []*pinecone.Vector{
 			{
 				ID:     id.String(),
 				Values: vector,
@@ -56,7 +56,7 @@ func (p *Storer) StoreVector(vector []float32) error {
 
 func (p *Storer) QueryVector(vector []float32, k int64) ([]uuid.UUID, error) {
 	ctx := context.Background()
-	req := pc.QueryParams{
+	req := pinecone.QueryParams{
 		Vector:    vector,
 		Namespace: p.namespace,
 		TopK:      k,

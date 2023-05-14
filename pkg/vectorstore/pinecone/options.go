@@ -1,4 +1,4 @@
-package pinecone
+package pc
 
 type options struct {
 	apiKey      string

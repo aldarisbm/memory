@@ -7,17 +7,18 @@ import (
 )
 
 type Embedder struct {
-	c              *goopenai.Client
-	embeddingModel goopenai.EmbeddingModel
+	c     *goopenai.Client
+	model goopenai.EmbeddingModel
 }
 
 func NewOpenAIEmbedder(opts ...CallOptions) *Embedder {
 	o := applyCallOptions(opts, options{
-		embeddingModel: goopenai.AdaEmbeddingV2,
+		model: goopenai.AdaEmbeddingV2,
 	})
 	c := goopenai.NewClient(o.apiKey)
 	return &Embedder{
-		c: c,
+		c:     c,
+		model: o.model,
 	}
 }
 
@@ -25,7 +26,7 @@ func (e *Embedder) EmbedDocument(document *shared.Document) ([]float32, error) {
 	ctx := context.Background()
 	req := goopenai.EmbeddingRequest{
 		Input: []string{document.Text},
-		Model: e.embeddingModel,
+		Model: e.model,
 	}
 	resp, err := e.c.CreateEmbeddings(ctx, req)
 	if err != nil {
@@ -38,7 +39,7 @@ func (e *Embedder) EmbedDocuments(documents []*shared.Document) ([][]float32, er
 	ctx := context.Background()
 	req := goopenai.EmbeddingRequest{
 		Input: make([]string, len(documents)),
-		Model: e.embeddingModel,
+		Model: e.model,
 	}
 	for i, document := range documents {
 		req.Input[i] = document.Text
