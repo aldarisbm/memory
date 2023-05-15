@@ -1,13 +1,13 @@
 package memory
 
 import (
-	"github.com/aldarisbm/memory/pkg/datasource"
+	datasource2 "github.com/aldarisbm/memory/pkg/datasource"
 	"github.com/aldarisbm/memory/pkg/embeddings"
 	"github.com/aldarisbm/memory/pkg/vectorstore"
 )
 
 type options struct {
-	datasource  datasource.DataSourcer
+	datasource  datasource2.DataSourcer
 	embedder    embeddings.Embedder
 	vectorStore vectorstore.VectorStorer
 }
@@ -29,7 +29,7 @@ func applyCallOptions(callOptions []CallOptions, defaultOptions ...options) *opt
 	return o
 }
 
-func WithDataSource(ds datasource.DataSourcer) CallOptions {
+func WithDataSource(ds datasource2.DataSourcer) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
 			o.datasource = ds

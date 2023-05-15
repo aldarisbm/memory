@@ -1,10 +1,10 @@
 # ITS NOT WORKING YET - DO NOT USE
 
 
-# LTM is a long term memory implementation for golang
+# Memory is a long term memory implementation for golang
 
 
-### LTM is a Long Term Memory implementation for golang. 
+### Memory is a Long Term Memory implementation for golang. 
 
 ## Description
 It is a simple abstraction that allows you to store and retrieve documents based on their text similarity. 
@@ -12,7 +12,7 @@ It uses a vector store to store the document embeddings and an embedder to gener
 we use document.Document to represent a document, and we can add metadata if we want to.
 
 
-We can create a new LTM instance by providing a vector store and an embedder. A local store can be 
+We can create a new Memory instance by providing a vector store and an embedder. A local store can be 
 provided but a default `sqlite` store will be created if not there
 
 # IMPORTANT:
@@ -75,7 +75,7 @@ func main() {
 ```
 
 
-### Example of using LTM
+### Example of using Memory
 
 ```go
 package main

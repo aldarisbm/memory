@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aldarisbm/memory/pkg/datasource"
-	"github.com/aldarisbm/memory/pkg/shared"
+	"github.com/aldarisbm/memory/pkg/document"
 	"github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
@@ -36,8 +36,8 @@ func (l *localStorer) Close() error {
 	return l.db.Close()
 }
 
-func (l *localStorer) GetDocument(id uuid.UUID) (*shared.Document, error) {
-	var doc shared.Document
+func (l *localStorer) GetDocument(id uuid.UUID) (*document.Document, error) {
+	var doc document.Document
 
 	stmt, err := l.db.Prepare("SELECT id, user, text, created_at, last_read_at, vector, metadata FROM documents WHERE id=?")
 	if err != nil {
@@ -61,9 +61,9 @@ func (l *localStorer) GetDocument(id uuid.UUID) (*shared.Document, error) {
 	return &doc, nil
 }
 
-func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*shared.Document, error) {
+func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*document.Document, error) {
 	// TODO should probably do this in a single query
-	var docs []*shared.Document
+	var docs []*document.Document
 
 	for _, id := range ids {
 		doc, err := l.GetDocument(id)
@@ -75,7 +75,7 @@ func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*shared.Document, error) 
 	return docs, nil
 }
 
-func (l *localStorer) StoreDocument(doc *shared.Document) error {
+func (l *localStorer) StoreDocument(doc *document.Document) error {
 	stmt, err := l.db.Prepare("INSERT INTO documents (id, user,  text, created_at, last_read_at, vector, metadata) VALUES (?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return fmt.Errorf("preparing statement: %s", err)
