@@ -1,9 +1,8 @@
-module github.com/aldarisbm/ltm
+module github.com/aldarisbm/memory
 
 go 1.20
 
 require (
-	github.com/golang/protobuf v1.5.2
 	github.com/nekomeowww/go-pinecone v0.1.0
 	github.com/sashabaranov/go-openai v1.9.3
 	go.etcd.io/bbolt v1.3.7
