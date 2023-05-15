@@ -1,6 +1,3 @@
-# ITS NOT WORKING YET - DO NOT USE
-
-
 # Memory is a long term memory implementation for golang
 
 
