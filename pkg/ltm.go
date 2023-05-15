@@ -60,7 +60,7 @@ func (l *LTM) RetrieveSimilarDocumentsByText(text string, topK int64) ([]*shared
 	if err != nil {
 		return nil, fmt.Errorf("embedding message: %w", err)
 	}
-	ids, err := l.vectorStore.QueryVector(embedding, topK)
+	ids, err := l.vectorStore.QuerySimilarity(embedding, topK)
 	if err != nil {
 		return nil, fmt.Errorf("querying vector: %w", err)
 	}

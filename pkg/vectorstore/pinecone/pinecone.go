@@ -58,7 +58,7 @@ func (p *storer) StoreVector(doc *shared.Document) error {
 	return nil
 }
 
-func (p *storer) QueryVector(vector []float32, k int64) ([]uuid.UUID, error) {
+func (p *storer) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error) {
 	ctx := context.Background()
 	req := pinecone.QueryParams{
 		Vector:    vector,
