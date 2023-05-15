@@ -23,7 +23,7 @@ It's designed with simple interfaces to be easily extended to other vector store
 ```go
 package main
 
-import "github.com/aldarisbm/ltm/pkg/datasource/sqlite"
+import "github.com/aldarisbm/memory/pkg/datasource/sqlite"
 
 func main() {
 	// can pass options
@@ -37,7 +37,7 @@ func main() {
 package main
 
 import (
-	oai "github.com/aldarisbm/ltm/pkg/embeddings/openai"
+	oai "github.com/aldarisbm/memory/pkg/embeddings/openai"
 	"os"
 )
 
@@ -55,7 +55,7 @@ func main() {
 package main
 
 import (
-    "github.com/aldarisbm/ltm/pkg/vectorstore/pinecone"
+    "github.com/aldarisbm/memory/pkg/vectorstore/pinecone"
     "os"
 )
 
@@ -73,15 +73,15 @@ func main() {
 
 
 ### Example of using LTM
+
 ```go
 package main
 
 import (
 	"fmt"
-	"github.com/aldarisbm/ltm/pkg"
-	"github.com/aldarisbm/ltm/pkg/datasource/sqlite"
-	oai "github.com/aldarisbm/ltm/pkg/embeddings/openai"
-	pc "github.com/aldarisbm/ltm/pkg/vectorstore/pinecone"
+	"github.com/aldarisbm/memory/pkg"
+	oai "github.com/aldarisbm/memory/pkg/embeddings/openai"
+	pc "github.com/aldarisbm/memory/pkg/vectorstore/pinecone"
 	"os"
 )
 
@@ -100,17 +100,18 @@ func main() {
 	// default local store
 	// as of right now expects both vector store and embedder
 	// in the future i'd like to use a default local embedder
-	memory := ltm.NewLTM(ltm.WithVectorStore(vs), ltm.WithEmbedder(emb))
+	mem := memory.NewMemory(memory.WithVectorStore(vs), memory.WithEmbedder(emb))
 
 	text := "seinfield is the best comedy show in the world"
 	user := "my_user"
-	doc := memory.NewDocument(text, user)
-	if err := memory.StoreDocument(doc); err != nil {
+
+	doc := mem.NewDocument(text, user)
+	if err := mem.StoreDocument(doc); err != nil {
 		panic(err)
 	}
 
 	q := "what is the best show in the world?"
-	docs, err := memory.RetrieveSimilarDocumentsByText(q, 1)
+	docs, err := mem.RetrieveSimilarDocumentsByText(q, 1)
 	if err != nil {
 		panic(err)
 	}

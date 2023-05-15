@@ -3,8 +3,8 @@ package pc
 import (
 	"context"
 	"fmt"
-	"github.com/aldarisbm/ltm/pkg/shared"
-	"github.com/aldarisbm/ltm/pkg/vectorstore"
+	"github.com/aldarisbm/memory/pkg/shared"
+	"github.com/aldarisbm/memory/pkg/vectorstore"
 	"github.com/google/uuid"
 	"github.com/nekomeowww/go-pinecone"
 )

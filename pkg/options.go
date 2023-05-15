@@ -1,9 +1,9 @@
-package ltm
+package memory
 
 import (
-	"github.com/aldarisbm/ltm/pkg/datasource"
-	"github.com/aldarisbm/ltm/pkg/embeddings"
-	"github.com/aldarisbm/ltm/pkg/vectorstore"
+	"github.com/aldarisbm/memory/pkg/datasource"
+	"github.com/aldarisbm/memory/pkg/embeddings"
+	"github.com/aldarisbm/memory/pkg/vectorstore"
 )
 
 type options struct {

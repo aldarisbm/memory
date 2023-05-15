@@ -2,7 +2,7 @@ package oai
 
 import (
 	"context"
-	"github.com/aldarisbm/ltm/pkg/embeddings"
+	"github.com/aldarisbm/memory/pkg/embeddings"
 	"github.com/sashabaranov/go-openai"
 )
 

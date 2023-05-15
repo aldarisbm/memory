@@ -1,25 +1,25 @@
-package ltm
+package memory
 
 import (
 	"fmt"
-	"github.com/aldarisbm/ltm/pkg/datasource"
-	"github.com/aldarisbm/ltm/pkg/datasource/sqlite"
-	"github.com/aldarisbm/ltm/pkg/embeddings"
-	"github.com/aldarisbm/ltm/pkg/shared"
-	"github.com/aldarisbm/ltm/pkg/vectorstore"
+	"github.com/aldarisbm/memory/pkg/datasource"
+	"github.com/aldarisbm/memory/pkg/datasource/sqlite"
+	"github.com/aldarisbm/memory/pkg/embeddings"
+	"github.com/aldarisbm/memory/pkg/shared"
+	"github.com/aldarisbm/memory/pkg/vectorstore"
 	"github.com/google/uuid"
 	"time"
 )
 
-// LTM is a long-term memory for a chatbot
-type LTM struct {
+// Memory is a long-term memory for a chatbot
+type Memory struct {
 	embedder    embeddings.Embedder
 	vectorStore vectorstore.VectorStorer
 	datasource  datasource.DataSourcer
 }
 
-// NewLTM creates or loads a new LTM instance from the given options
-func NewLTM(opts ...CallOptions) *LTM {
+// NewMemory creates or loads a new Memory instance from the given options
+func NewMemory(opts ...CallOptions) *Memory {
 	o := applyCallOptions(opts, options{
 		datasource: sqlite.NewLocalStorer(),
 	})
@@ -27,44 +27,44 @@ func NewLTM(opts ...CallOptions) *LTM {
 	if o.embedder == nil || o.vectorStore == nil {
 		panic("embedder and vector store must be provided")
 	}
-	return &LTM{
+	return &Memory{
 		embedder:    o.embedder,
 		vectorStore: o.vectorStore,
 		datasource:  o.datasource,
 	}
 }
 
-// StoreDocument stores a document in the LTM
-func (l *LTM) StoreDocument(document *shared.Document) error {
-	embedding, err := l.embedder.EmbedDocumentText(document.Text)
+// StoreDocument stores a document in the Memory
+func (m *Memory) StoreDocument(document *shared.Document) error {
+	embedding, err := m.embedder.EmbedDocumentText(document.Text)
 	if err != nil {
 		return fmt.Errorf("embedding message: %w", err)
 	}
 	document.Vector = embedding
-	if err := l.vectorStore.StoreVector(document); err != nil {
+	if err := m.vectorStore.StoreVector(document); err != nil {
 		return fmt.Errorf("calling store vector: %w", err)
 	}
-	if err := l.datasource.StoreDocument(document); err != nil {
+	if err := m.datasource.StoreDocument(document); err != nil {
 		return fmt.Errorf("storing message: %w", err)
 	}
 	return nil
 }
 
-// RetrieveSimilarDocumentsByText retrieves similar documents from the LTM
-func (l *LTM) RetrieveSimilarDocumentsByText(text string, topK int64) ([]*shared.Document, error) {
+// RetrieveSimilarDocumentsByText retrieves similar documents from the Memory
+func (m *Memory) RetrieveSimilarDocumentsByText(text string, topK int64) ([]*shared.Document, error) {
 	const TopKDefault int64 = 10
 	if topK == 0 {
 		topK = TopKDefault
 	}
-	embedding, err := l.embedder.EmbedDocumentText(text)
+	embedding, err := m.embedder.EmbedDocumentText(text)
 	if err != nil {
 		return nil, fmt.Errorf("embedding message: %w", err)
 	}
-	ids, err := l.vectorStore.QuerySimilarity(embedding, topK)
+	ids, err := m.vectorStore.QuerySimilarity(embedding, topK)
 	if err != nil {
 		return nil, fmt.Errorf("querying vector: %w", err)
 	}
-	documents, err := l.datasource.GetDocuments(ids)
+	documents, err := m.datasource.GetDocuments(ids)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func (l *LTM) RetrieveSimilarDocumentsByText(text string, topK int64) ([]*shared
 	return documents, nil
 }
 
-func (l *LTM) NewDocument(text string, user string) *shared.Document {
+func (m *Memory) NewDocument(text string, user string) *shared.Document {
 	return &shared.Document{
 		ID:         uuid.New(),
 		Text:       text,

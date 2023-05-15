@@ -1,7 +1,7 @@
 package datasource
 
 import (
-	"github.com/aldarisbm/ltm/pkg/shared"
+	"github.com/aldarisbm/memory/pkg/shared"
 	"github.com/google/uuid"
 )
 
