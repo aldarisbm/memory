@@ -102,8 +102,9 @@ func main() {
 
 	// default local store
 	// as of right now expects both vector store and embedder
-	// in the future i'd like to use a default local embedder
+	// in the future I'd like to use a default local embedder
 	mem := memory.NewMemory(memory.WithVectorStore(vs), memory.WithEmbedder(emb))
+	defer mem.Close()
 
 	text := "seinfield is the best comedy show in the world"
 	user := "my_user"

@@ -81,3 +81,7 @@ func (m *Memory) NewDocument(text string, user string) *shared.Document {
 		LastReadAt: time.Now(),
 	}
 }
+
+func (m *Memory) Close() error {
+	return m.datasource.Close()
+}
