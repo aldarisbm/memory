@@ -3,7 +3,7 @@ package pc
 import (
 	"context"
 	"fmt"
-	"github.com/aldarisbm/memory/pkg/document"
+	"github.com/aldarisbm/memory/pkg/types"
 	"github.com/aldarisbm/memory/pkg/vectorstore"
 	"github.com/google/uuid"
 	"github.com/nekomeowww/go-pinecone"
@@ -35,7 +35,7 @@ func NewStorer(opts ...CallOptions) *storer {
 	}
 }
 
-func (p *storer) StoreVector(doc *document.Document) error {
+func (p *storer) StoreVector(doc *types.Document) error {
 	ctx := context.Background()
 	req := pinecone.UpsertVectorsParams{
 		Vectors: []*pinecone.Vector{

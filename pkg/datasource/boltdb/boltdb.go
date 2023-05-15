@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aldarisbm/memory/pkg/datasource"
-	"github.com/aldarisbm/memory/pkg/document"
+	"github.com/aldarisbm/memory/pkg/types"
 	"github.com/google/uuid"
 	bolt "go.etcd.io/bbolt"
 )
@@ -46,8 +46,8 @@ func (l *localStorer) Close() error {
 	return l.db.Close()
 }
 
-func (l *localStorer) GetDocument(id uuid.UUID) (*document.Document, error) {
-	var doc document.Document
+func (l *localStorer) GetDocument(id uuid.UUID) (*types.Document, error) {
+	var doc types.Document
 	err := l.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(l.bucketName))
 		v := b.Get([]byte(id.String()))
@@ -63,8 +63,8 @@ func (l *localStorer) GetDocument(id uuid.UUID) (*document.Document, error) {
 	return &doc, nil
 }
 
-func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*document.Document, error) {
-	var docs []*document.Document
+func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*types.Document, error) {
+	var docs []*types.Document
 	for _, id := range ids {
 		doc, err := l.GetDocument(id)
 		if err != nil {
@@ -75,7 +75,7 @@ func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*document.Document, error
 	return docs, nil
 }
 
-func (l *localStorer) StoreDocument(document *document.Document) error {
+func (l *localStorer) StoreDocument(document *types.Document) error {
 	doc, err := json.Marshal(&document)
 	if err != nil {
 		return fmt.Errorf("marshaling document: %s", err)

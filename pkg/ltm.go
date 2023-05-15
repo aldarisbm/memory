@@ -2,10 +2,10 @@ package memory
 
 import (
 	"fmt"
-	datasource2 "github.com/aldarisbm/memory/pkg/datasource"
+	"github.com/aldarisbm/memory/pkg/datasource"
 	"github.com/aldarisbm/memory/pkg/datasource/sqlite"
-	"github.com/aldarisbm/memory/pkg/document"
 	"github.com/aldarisbm/memory/pkg/embeddings"
+	"github.com/aldarisbm/memory/pkg/types"
 	"github.com/aldarisbm/memory/pkg/vectorstore"
 	"github.com/google/uuid"
 	"time"
@@ -15,7 +15,7 @@ import (
 type Memory struct {
 	embedder    embeddings.Embedder
 	vectorStore vectorstore.VectorStorer
-	datasource  datasource2.DataSourcer
+	datasource  datasource.DataSourcer
 }
 
 // NewMemory creates or loads a new Memory instance from the given options
@@ -35,7 +35,7 @@ func NewMemory(opts ...CallOptions) *Memory {
 }
 
 // StoreDocument stores a document in the Memory
-func (m *Memory) StoreDocument(document *document.Document) error {
+func (m *Memory) StoreDocument(document *types.Document) error {
 	embedding, err := m.embedder.EmbedDocumentText(document.Text)
 	if err != nil {
 		return fmt.Errorf("embedding message: %w", err)
@@ -51,7 +51,7 @@ func (m *Memory) StoreDocument(document *document.Document) error {
 }
 
 // RetrieveSimilarDocumentsByText retrieves similar documents from the Memory
-func (m *Memory) RetrieveSimilarDocumentsByText(text string, topK int64) ([]*document.Document, error) {
+func (m *Memory) RetrieveSimilarDocumentsByText(text string, topK int64) ([]*types.Document, error) {
 	const TopKDefault int64 = 10
 	if topK == 0 {
 		topK = TopKDefault
@@ -72,8 +72,8 @@ func (m *Memory) RetrieveSimilarDocumentsByText(text string, topK int64) ([]*doc
 	return documents, nil
 }
 
-func (m *Memory) NewDocument(text string, user string) *document.Document {
-	return &document.Document{
+func (m *Memory) NewDocument(text string, user string) *types.Document {
+	return &types.Document{
 		ID:         uuid.New(),
 		Text:       text,
 		User:       user,
