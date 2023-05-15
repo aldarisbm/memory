@@ -3,28 +3,28 @@ package oai
 import (
 	"context"
 	"github.com/aldarisbm/ltm/pkg/embeddings"
-	goopenai "github.com/sashabaranov/go-openai"
+	"github.com/sashabaranov/go-openai"
 )
 
-type Embedder struct {
-	c     *goopenai.Client
-	model goopenai.EmbeddingModel
+type embedder struct {
+	c     *openai.Client
+	model openai.EmbeddingModel
 }
 
-func NewOpenAIEmbedder(opts ...CallOptions) *Embedder {
+func NewOpenAIEmbedder(opts ...CallOptions) *embedder {
 	o := applyCallOptions(opts, options{
-		model: goopenai.AdaEmbeddingV2,
+		model: openai.AdaEmbeddingV2,
 	})
-	c := goopenai.NewClient(o.apiKey)
-	return &Embedder{
+	c := openai.NewClient(o.apiKey)
+	return &embedder{
 		c:     c,
 		model: o.model,
 	}
 }
 
-func (e *Embedder) EmbedDocumentText(text string) ([]float32, error) {
+func (e *embedder) EmbedDocumentText(text string) ([]float32, error) {
 	ctx := context.Background()
-	req := goopenai.EmbeddingRequest{
+	req := openai.EmbeddingRequest{
 		Input: []string{text},
 		Model: e.model,
 	}
@@ -35,9 +35,9 @@ func (e *Embedder) EmbedDocumentText(text string) ([]float32, error) {
 	return resp.Data[0].Embedding, nil
 }
 
-func (e *Embedder) EmbedDocuments(texts []string) ([][]float32, error) {
+func (e *embedder) EmbedDocuments(texts []string) ([][]float32, error) {
 	ctx := context.Background()
-	req := goopenai.EmbeddingRequest{
+	req := openai.EmbeddingRequest{
 		Input: make([]string, len(texts)),
 		Model: e.model,
 	}
@@ -55,5 +55,5 @@ func (e *Embedder) EmbedDocuments(texts []string) ([][]float32, error) {
 	return embeddings, nil
 }
 
-// Ensure Embedder implements embeddings.Embedder
-var _ embeddings.Embedder = (*Embedder)(nil)
+// Ensure embedder implements embeddings.Embedder
+var _ embeddings.Embedder = (*embedder)(nil)

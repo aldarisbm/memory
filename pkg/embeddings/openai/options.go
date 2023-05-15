@@ -1,10 +1,10 @@
 package oai
 
-import goopenai "github.com/sashabaranov/go-openai"
+import "github.com/sashabaranov/go-openai"
 
 type options struct {
 	apiKey string
-	model  goopenai.EmbeddingModel
+	model  openai.EmbeddingModel
 }
 
 type CallOptions struct {
@@ -32,7 +32,7 @@ func WithApiKey(apiKey string) CallOptions {
 	}
 }
 
-func WithModel(model goopenai.EmbeddingModel) CallOptions {
+func WithModel(model openai.EmbeddingModel) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
 			o.model = model

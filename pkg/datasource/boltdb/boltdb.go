@@ -9,17 +9,18 @@ import (
 	bolt "go.etcd.io/bbolt"
 )
 
-type LocalStorer struct {
+type localStorer struct {
 	db         *bolt.DB
 	bucketName string
 }
 
-func NewLocalStorer(opts ...CallOptions) *LocalStorer {
+func NewLocalStorer(opts ...CallOptions) *localStorer {
 	o := applyCallOptions(opts, options{
 		path:   "localdb",
 		bucket: "ltm",
+		mode:   0600,
 	})
-	dbm, err := bolt.Open(o.path, 0600, nil)
+	dbm, err := bolt.Open(o.path, o.mode, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -34,18 +35,18 @@ func NewLocalStorer(opts ...CallOptions) *LocalStorer {
 		panic(err)
 	}
 
-	ls := &LocalStorer{
+	ls := &localStorer{
 		db:         dbm,
 		bucketName: o.bucket,
 	}
 	return ls
 }
 
-func (l *LocalStorer) Close() error {
+func (l *localStorer) Close() error {
 	return l.db.Close()
 }
 
-func (l *LocalStorer) GetDocument(id uuid.UUID) (*shared.Document, error) {
+func (l *localStorer) GetDocument(id uuid.UUID) (*shared.Document, error) {
 	var doc shared.Document
 	err := l.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(l.bucketName))
@@ -62,7 +63,7 @@ func (l *LocalStorer) GetDocument(id uuid.UUID) (*shared.Document, error) {
 	return &doc, nil
 }
 
-func (l *LocalStorer) GetDocuments(ids []uuid.UUID) ([]*shared.Document, error) {
+func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*shared.Document, error) {
 	var docs []*shared.Document
 	for _, id := range ids {
 		doc, err := l.GetDocument(id)
@@ -74,7 +75,7 @@ func (l *LocalStorer) GetDocuments(ids []uuid.UUID) ([]*shared.Document, error) 
 	return docs, nil
 }
 
-func (l *LocalStorer) StoreDocument(document *shared.Document) error {
+func (l *localStorer) StoreDocument(document *shared.Document) error {
 	doc, err := json.Marshal(&document)
 	if err != nil {
 		return fmt.Errorf("marshaling document: %s", err)
@@ -90,5 +91,5 @@ func (l *LocalStorer) StoreDocument(document *shared.Document) error {
 	return nil
 }
 
-// Ensure LocalStorer implements DataSourcer
-var _ datasource.DataSourcer = (*LocalStorer)(nil)
+// Ensure localStorer implements DataSourcer
+var _ datasource.DataSourcer = (*localStorer)(nil)

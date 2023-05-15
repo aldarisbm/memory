@@ -11,12 +11,12 @@ import (
 	"log"
 )
 
-type LocalStorer struct {
+type localStorer struct {
 	db   *sql.DB
 	path string
 }
 
-func NewLocalStorer(opts ...CallOptions) *LocalStorer {
+func NewLocalStorer(opts ...CallOptions) *localStorer {
 	o := applyCallOptions(opts, options{
 		path: "localdb.db",
 	})
@@ -25,18 +25,18 @@ func NewLocalStorer(opts ...CallOptions) *LocalStorer {
 		log.Fatal(err)
 	}
 
-	ls := &LocalStorer{
+	ls := &localStorer{
 		db:   db,
 		path: o.path,
 	}
 	return ls
 }
 
-func (l *LocalStorer) Close() error {
+func (l *localStorer) Close() error {
 	return l.db.Close()
 }
 
-func (l *LocalStorer) GetDocument(id uuid.UUID) (*shared.Document, error) {
+func (l *localStorer) GetDocument(id uuid.UUID) (*shared.Document, error) {
 	var doc shared.Document
 
 	stmt, err := l.db.Prepare("SELECT id, user, text, created_at, last_read_at, vector, metadata FROM documents WHERE id=?")
@@ -61,7 +61,7 @@ func (l *LocalStorer) GetDocument(id uuid.UUID) (*shared.Document, error) {
 	return &doc, nil
 }
 
-func (l *LocalStorer) GetDocuments(ids []uuid.UUID) ([]*shared.Document, error) {
+func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*shared.Document, error) {
 	// TODO should probably do this in a single query
 	var docs []*shared.Document
 
@@ -75,7 +75,7 @@ func (l *LocalStorer) GetDocuments(ids []uuid.UUID) ([]*shared.Document, error) 
 	return docs, nil
 }
 
-func (l *LocalStorer) StoreDocument(doc *shared.Document) error {
+func (l *localStorer) StoreDocument(doc *shared.Document) error {
 	stmt, err := l.db.Prepare("INSERT INTO documents (id, user,  text, created_at, last_read_at, vector, metadata) VALUES (?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return fmt.Errorf("preparing statement: %s", err)
@@ -100,5 +100,5 @@ func (l *LocalStorer) StoreDocument(doc *shared.Document) error {
 	return nil
 }
 
-// Ensure LocalStorer implements DataSourcer
-var _ datasource.DataSourcer = (*LocalStorer)(nil)
+// Ensure localStorer implements DataSourcer
+var _ datasource.DataSourcer = (*localStorer)(nil)

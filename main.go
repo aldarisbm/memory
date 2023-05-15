@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/aldarisbm/ltm/pkg"
 	"github.com/aldarisbm/ltm/pkg/datasource/sqlite"
-	"github.com/aldarisbm/ltm/pkg/embeddings/openai"
-	"github.com/aldarisbm/ltm/pkg/vectorstore/pinecone"
+	oai "github.com/aldarisbm/ltm/pkg/embeddings/openai"
+	pc "github.com/aldarisbm/ltm/pkg/vectorstore/pinecone"
 	"os"
 )
 
@@ -22,7 +22,7 @@ func main() {
 	)
 
 	ls := sqlite.NewLocalStorer()
-	memory := ltm.NewLTM(ls, emb, vs)
+	memory := ltm.NewLTM(ltm.WithVectorStore(vs), ltm.WithEmbedder(emb), ltm.WithDataSource(ls))
 
 	text := "seinfield is the best comedy show in the world"
 	user := "my_user"

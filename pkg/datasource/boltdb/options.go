@@ -1,8 +1,11 @@
 package boltdb
 
+import "os"
+
 type options struct {
 	path   string
 	bucket string
+	mode   os.FileMode
 }
 type CallOptions struct {
 	applyFunc func(o *options)

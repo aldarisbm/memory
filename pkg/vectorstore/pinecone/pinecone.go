@@ -9,14 +9,16 @@ import (
 	"github.com/nekomeowww/go-pinecone"
 )
 
-type Storer struct {
+const Namespace = "asltm"
+
+type storer struct {
 	client    *pinecone.IndexClient
 	namespace string
 }
 
-func NewStorer(opts ...CallOptions) *Storer {
+func NewStorer(opts ...CallOptions) *storer {
 	o := applyCallOptions(opts, options{
-		namespace: "ltmllm",
+		namespace: Namespace,
 	})
 	c, err := pinecone.NewIndexClient(
 		pinecone.WithAPIKey(o.apiKey),
@@ -27,13 +29,13 @@ func NewStorer(opts ...CallOptions) *Storer {
 	if err != nil {
 		panic(err)
 	}
-	return &Storer{
+	return &storer{
 		client:    c,
 		namespace: o.namespace,
 	}
 }
 
-func (p *Storer) StoreVector(doc *shared.Document) error {
+func (p *storer) StoreVector(doc *shared.Document) error {
 	ctx := context.Background()
 	req := pinecone.UpsertVectorsParams{
 		Vectors: []*pinecone.Vector{
@@ -56,7 +58,7 @@ func (p *Storer) StoreVector(doc *shared.Document) error {
 	return nil
 }
 
-func (p *Storer) QueryVector(vector []float32, k int64) ([]uuid.UUID, error) {
+func (p *storer) QueryVector(vector []float32, k int64) ([]uuid.UUID, error) {
 	ctx := context.Background()
 	req := pinecone.QueryParams{
 		Vector:    vector,
@@ -83,4 +85,4 @@ func (p *Storer) QueryVector(vector []float32, k int64) ([]uuid.UUID, error) {
 	return uuids, nil
 }
 
-var _ vectorstore.VectorStorer = (*Storer)(nil)
+var _ vectorstore.VectorStorer = (*storer)(nil)
