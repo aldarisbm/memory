@@ -1,3 +1,6 @@
+# ITS NOT WORKING YET - DO NOT USE
+
+
 # LTM is a long term memory implementation for golang
 
 
