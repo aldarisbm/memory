@@ -11,6 +11,7 @@ type embedder struct {
 	model openai.EmbeddingModel
 }
 
+// NewOpenAIEmbedder returns an Embedder that uses OpenAI's API to embed text.
 func NewOpenAIEmbedder(opts ...CallOptions) *embedder {
 	o := applyCallOptions(opts, options{
 		model: openai.AdaEmbeddingV2,
@@ -22,6 +23,7 @@ func NewOpenAIEmbedder(opts ...CallOptions) *embedder {
 	}
 }
 
+// EmbedDocumentText embeds the given text
 func (e *embedder) EmbedDocumentText(text string) ([]float32, error) {
 	ctx := context.Background()
 	req := openai.EmbeddingRequest{
@@ -35,7 +37,8 @@ func (e *embedder) EmbedDocumentText(text string) ([]float32, error) {
 	return resp.Data[0].Embedding, nil
 }
 
-func (e *embedder) EmbedDocuments(texts []string) ([][]float32, error) {
+// EmbedDocumentTexts embeds the given texts
+func (e *embedder) EmbedDocumentTexts(texts []string) ([][]float32, error) {
 	ctx := context.Background()
 	req := openai.EmbeddingRequest{
 		Input: make([]string, len(texts)),

@@ -16,10 +16,12 @@ type storer struct {
 	namespace string
 }
 
+// NewStorer returns a new storer
 func NewStorer(opts ...CallOptions) *storer {
 	o := applyCallOptions(opts, options{
 		namespace: Namespace,
 	})
+	// TODO we should be able to create a new index if it doesn't exist
 	c, err := pinecone.NewIndexClient(
 		pinecone.WithAPIKey(o.apiKey),
 		pinecone.WithIndexName(o.indexName),
@@ -35,6 +37,8 @@ func NewStorer(opts ...CallOptions) *storer {
 	}
 }
 
+// StoreVector stores the given Document
+// it attempts to save the metadata
 func (p *storer) StoreVector(doc *types.Document) error {
 	ctx := context.Background()
 	req := pinecone.UpsertVectorsParams{
@@ -58,6 +62,7 @@ func (p *storer) StoreVector(doc *types.Document) error {
 	return nil
 }
 
+// QuerySimilarity returns the k most similar documents to the given vector
 func (p *storer) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error) {
 	ctx := context.Background()
 	req := pinecone.QueryParams{
@@ -85,4 +90,5 @@ func (p *storer) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error)
 	return uuids, nil
 }
 
+// Ensure that storer implements VectorStorer
 var _ vectorstore.VectorStorer = (*storer)(nil)

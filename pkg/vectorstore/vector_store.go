@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// VectorStorer is an interface for vector stores
 type VectorStorer interface {
 	// StoreVector stores the given Document
 	StoreVector(document *types.Document) error

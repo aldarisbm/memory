@@ -7,6 +7,8 @@ type options struct {
 	projectName string
 	environment string
 }
+
+// CallOptions provides a way to set optional parameters to various methods
 type CallOptions struct {
 	applyFunc func(o *options)
 }
@@ -24,6 +26,7 @@ func applyCallOptions(callOptions []CallOptions, defaultOptions ...options) *opt
 	return o
 }
 
+// WithApiKey sets the API key for the Pinecone client
 func WithApiKey(apiKey string) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
@@ -32,6 +35,7 @@ func WithApiKey(apiKey string) CallOptions {
 	}
 }
 
+// WithIndexName sets the index name for the Pinecone client
 func WithIndexName(indexName string) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
@@ -40,6 +44,8 @@ func WithIndexName(indexName string) CallOptions {
 	}
 }
 
+// WithNamespace sets the namespace for the Pinecone client
+// asllm is the default namespace
 func WithNamespace(namespace string) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
@@ -48,6 +54,7 @@ func WithNamespace(namespace string) CallOptions {
 	}
 }
 
+// WithProjectName sets the project name for the Pinecone client
 func WithProjectName(projectName string) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
@@ -56,6 +63,8 @@ func WithProjectName(projectName string) CallOptions {
 	}
 }
 
+// WithEnvironment sets the environment for the Pinecone client
+// aka the region
 func WithEnvironment(environment string) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {

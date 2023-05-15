@@ -14,6 +14,7 @@ type localStorer struct {
 	bucketName string
 }
 
+// NewLocalStorer returns a new local storer
 func NewLocalStorer(opts ...CallOptions) *localStorer {
 	o := applyCallOptions(opts, options{
 		path:   "localdb",
@@ -42,10 +43,12 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 	return ls
 }
 
+// Close closes the local storer
 func (l *localStorer) Close() error {
 	return l.db.Close()
 }
 
+// GetDocument returns the document with the given id
 func (l *localStorer) GetDocument(id uuid.UUID) (*types.Document, error) {
 	var doc types.Document
 	err := l.db.View(func(tx *bolt.Tx) error {
@@ -63,6 +66,7 @@ func (l *localStorer) GetDocument(id uuid.UUID) (*types.Document, error) {
 	return &doc, nil
 }
 
+// GetDocuments returns the documents with the given ids
 func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*types.Document, error) {
 	var docs []*types.Document
 	for _, id := range ids {
@@ -75,6 +79,8 @@ func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*types.Document, error) {
 	return docs, nil
 }
 
+// StoreDocument stores the given document
+// We use a k/v store key being uuid and value being []byte of Document
 func (l *localStorer) StoreDocument(document *types.Document) error {
 	doc, err := json.Marshal(&document)
 	if err != nil {

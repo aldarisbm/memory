@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+// Document is a struct that represents a document
+// in the system
 type Document struct {
 	ID         uuid.UUID      `json:"id"`
 	User       string         `json:"user"`

@@ -10,6 +10,7 @@ type options struct {
 	datasource  datasource2.DataSourcer
 	embedder    embeddings.Embedder
 	vectorStore vectorstore.VectorStorer
+	cacheSize   int
 }
 
 type CallOptions struct {
@@ -49,6 +50,14 @@ func WithVectorStore(vs vectorstore.VectorStorer) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
 			o.vectorStore = vs
+		},
+	}
+}
+
+func WithCacheSize(size int) CallOptions {
+	return CallOptions{
+		applyFunc: func(o *options) {
+			o.cacheSize = size
 		},
 	}
 }

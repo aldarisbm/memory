@@ -7,6 +7,7 @@ type options struct {
 	model  openai.EmbeddingModel
 }
 
+// CallOptions are the options for the Embedder.
 type CallOptions struct {
 	applyFunc func(o *options)
 }
@@ -24,6 +25,7 @@ func applyCallOptions(callOptions []CallOptions, defaultOptions ...options) *opt
 	return o
 }
 
+// WithApiKey sets the OpenAI API key for the Embedder.
 func WithApiKey(apiKey string) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
@@ -32,6 +34,7 @@ func WithApiKey(apiKey string) CallOptions {
 	}
 }
 
+// WithModel sets the OpenAI model for the Embedder. ada as default.
 func WithModel(model openai.EmbeddingModel) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {

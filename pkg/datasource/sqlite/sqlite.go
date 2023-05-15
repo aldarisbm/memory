@@ -16,6 +16,7 @@ type localStorer struct {
 	path string
 }
 
+// NewLocalStorer returns a new local storer
 func NewLocalStorer(opts ...CallOptions) *localStorer {
 	o := applyCallOptions(opts, options{
 		path: "localdb.db",
@@ -32,10 +33,12 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 	return ls
 }
 
+// Close closes the local storer
 func (l *localStorer) Close() error {
 	return l.db.Close()
 }
 
+// GetDocument returns the document with the given id
 func (l *localStorer) GetDocument(id uuid.UUID) (*types.Document, error) {
 	var doc types.Document
 
@@ -61,6 +64,7 @@ func (l *localStorer) GetDocument(id uuid.UUID) (*types.Document, error) {
 	return &doc, nil
 }
 
+// GetDocuments returns the documents with the given ids
 func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*types.Document, error) {
 	// TODO should probably do this in a single query
 	var docs []*types.Document
@@ -75,6 +79,8 @@ func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*types.Document, error) {
 	return docs, nil
 }
 
+// StoreDocument stores the given document
+// We marshal the vector and metadata to []byte and store them as blobs
 func (l *localStorer) StoreDocument(doc *types.Document) error {
 	stmt, err := l.db.Prepare("INSERT INTO documents (id, user,  text, created_at, last_read_at, vector, metadata) VALUES (?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
