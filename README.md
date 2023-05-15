@@ -62,10 +62,10 @@ import (
     "os"
 )
 
-func main() {
-    // can pass options such as project name, index name, environment and api key
+func main() { 
+	// can pass options such as project name, index name, environment and api key 
 	// it will create a default namespace if not provided
-    vs := pinecone.NewStorer(
+	vs := pinecone.NewStorer(
         pinecone.WithApiKey(os.Getenv("PINECONE_API_KEY")),
         pinecone.WithIndexName(os.Getenv("PINECONE_INDEX_NAME")),
         pinecone.WithProjectName(os.Getenv("PINECONE_PROJECT_NAME")),

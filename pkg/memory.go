@@ -81,7 +81,7 @@ func (m *Memory) RetrieveSimilarDocumentsByText(text string, topK int64) ([]*typ
 			if err != nil {
 				return nil, fmt.Errorf("getting message: %w", err)
 			}
-			m.cache[id] = document
+			m.addToCache(document)
 		}
 		documents = append(documents, document)
 	}
