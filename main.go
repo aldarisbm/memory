@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-
 	vs := pc.NewStorer(
 		pc.WithApiKey(os.Getenv("PINECONE_API_KEY")),
 		pc.WithIndexName(os.Getenv("PINECONE_INDEX_NAME")),
@@ -23,17 +22,17 @@ func main() {
 	)
 
 	ls := sqlite.NewLocalStorer()
-	ltm := pkg.NewLTM(ls, emb, vs)
+	memory := ltm.NewLTM(ls, emb, vs)
 
-	text := "You should always trust the puppers"
+	text := "seinfield is the best comedy show in the world"
 	user := "my_user"
-	doc := ltm.NewDocument(text, user)
-	if err := ltm.StoreDocument(doc); err != nil {
+	doc := memory.NewDocument(text, user)
+	if err := memory.StoreDocument(doc); err != nil {
 		panic(err)
 	}
 
-	q := "who should i trust?"
-	docs, err := ltm.RetrieveSimilarDocumentsByText(q, 1)
+	q := "what is the best show in the world?"
+	docs, err := memory.RetrieveSimilarDocumentsByText(q, 1)
 	if err != nil {
 		panic(err)
 	}

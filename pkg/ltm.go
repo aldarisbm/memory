@@ -1,8 +1,9 @@
-package pkg
+package ltm
 
 import (
 	"fmt"
 	"github.com/aldarisbm/ltm/pkg/datasource"
+	"github.com/aldarisbm/ltm/pkg/datasource/sqlite"
 	"github.com/aldarisbm/ltm/pkg/embeddings"
 	"github.com/aldarisbm/ltm/pkg/shared"
 	"github.com/aldarisbm/ltm/pkg/vectorstore"
@@ -18,15 +19,18 @@ type LTM struct {
 }
 
 // NewLTM creates or loads a new LTM instance from the given options
-func NewLTM(dataSourcer datasource.DataSourcer, embedder embeddings.Embedder, vectorStorer vectorstore.VectorStorer) *LTM {
-	if dataSourcer == nil || embedder == nil || vectorStorer == nil {
-		panic("dataSourcer, embedder and vectorStorer must not be nil")
-	}
+func NewLTM(opts ...CallOptions) *LTM {
+	o := applyCallOptions(opts, options{
+		datasource: sqlite.NewLocalStorer(),
+	})
 
+	if o.embedder == nil || o.vectorStore == nil {
+		panic("embedder and vector store must be provided")
+	}
 	return &LTM{
-		embedder:    embedder,
-		vectorStore: vectorStorer,
-		datasource:  dataSourcer,
+		embedder:    o.embedder,
+		vectorStore: o.vectorStore,
+		datasource:  o.datasource,
 	}
 }
 
@@ -62,7 +66,7 @@ func (l *LTM) RetrieveSimilarDocumentsByText(text string, topK int64) ([]*shared
 	}
 	documents, err := l.datasource.GetDocuments(ids)
 	if err != nil {
-		return nil, fmt.Errorf("getting documents: %w", err)
+		return nil, err
 	}
 
 	return documents, nil

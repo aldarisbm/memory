@@ -57,7 +57,7 @@ func (l *LocalStorer) GetDocument(id uuid.UUID) (*shared.Document, error) {
 		return nil
 	})
 	if err != nil {
-		return nil, fmt.Errorf("getting document: %s", err)
+		return nil, err
 	}
 	return &doc, nil
 }
