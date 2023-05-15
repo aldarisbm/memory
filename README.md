@@ -100,17 +100,17 @@ func main() {
 	// default local store
 	// as of right now expects both vector store and embedder
 	// in the future i'd like to use a default local embedder
-	longTermMemory := ltm.NewLTM(ltm.WithVectorStore(vs), ltm.WithEmbedder(emb))
+	memory := ltm.NewLTM(ltm.WithVectorStore(vs), ltm.WithEmbedder(emb))
 
 	text := "seinfield is the best comedy show in the world"
 	user := "my_user"
-	doc := longTermMemory.NewDocument(text, user)
-	if err := longTermMemory.StoreDocument(doc); err != nil {
+	doc := memory.NewDocument(text, user)
+	if err := memory.StoreDocument(doc); err != nil {
 		panic(err)
 	}
 
 	q := "what is the best show in the world?"
-	docs, err := melongTermMemorymory.RetrieveSimilarDocumentsByText(q, 1)
+	docs, err := memory.RetrieveSimilarDocumentsByText(q, 1)
 	if err != nil {
 		panic(err)
 	}
