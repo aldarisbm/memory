@@ -19,7 +19,7 @@ type localStorer struct {
 // NewLocalStorer returns a new local storer
 func NewLocalStorer(opts ...CallOptions) *localStorer {
 	o := applyCallOptions(opts, options{
-		path: "localdb.db",
+		path: "local.db",
 	})
 	db, err := createTable(o.path)
 	if err != nil {

@@ -1,3 +1,5 @@
 .idea/
 *localdb*
+*.db
 main.go
+*.json
