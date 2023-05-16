@@ -1,8 +1,5 @@
 # Memory is a long term memory implementation for golang
 
-
-### Memory is a Long Term Memory implementation for golang. 
-
 ## Description
 It is a simple abstraction that allows you to store and retrieve documents based on their text similarity. 
 It uses a vector store to store the document embeddings and an embedder to generate the embeddings.
