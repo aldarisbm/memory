@@ -11,6 +11,8 @@ import (
 	"os/user"
 )
 
+const DomainName = "xyz.memorystore"
+
 type localStorer struct {
 	db         *bolt.DB
 	bucketName string
@@ -26,8 +28,8 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 	if o.path == "" {
 		usr, _ := user.Current()
 		dir := usr.HomeDir
-		_ = os.Mkdir(fmt.Sprintf("%s/memory", dir), os.ModePerm)
-		o.path = fmt.Sprintf("%s/memory/boltdb", dir)
+		_ = os.Mkdir(fmt.Sprintf("%s/%s", dir, DomainName), os.ModePerm)
+		o.path = fmt.Sprintf("%s/%s/boltdb", dir, DomainName)
 	}
 	dbm, err := bolt.Open(o.path, o.mode, nil)
 	if err != nil {

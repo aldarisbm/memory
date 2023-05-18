@@ -13,6 +13,8 @@ import (
 	"os/user"
 )
 
+const DomainName = "xyz.memorystore"
+
 type localStorer struct {
 	db   *sql.DB
 	path string
@@ -25,8 +27,8 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 	if o.path == "" {
 		usr, _ := user.Current()
 		dir := usr.HomeDir
-		_ = os.Mkdir(fmt.Sprintf("%s/memory", dir), os.ModePerm)
-		o.path = fmt.Sprintf("%s/memory/memory.db", dir)
+		_ = os.Mkdir(fmt.Sprintf("%s/%s", dir, DomainName), os.ModePerm)
+		o.path = fmt.Sprintf("%s/%s/memory.db", dir, DomainName)
 	}
 	db, err := createTable(o.path)
 	if err != nil {
