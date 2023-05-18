@@ -1,33 +1,49 @@
 package sqlitevss
 
 import (
+	"database/sql"
 	"github.com/aldarisbm/memory/pkg/types"
 	"github.com/aldarisbm/memory/pkg/vectorstore"
 	"github.com/google/uuid"
+	"github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3"
 )
 
-// SQLiteVSS is a vector store that uses SQLite as the backend
-type SQLiteVSS struct{}
+// sqliteVSS is a vector store that uses SQLite as the backend
+type sqliteVSS struct {
+	db *sql.DB
+}
 
-// NewSQLiteVSS returns a new SQLiteVSS
-func NewSQLiteVSS() *SQLiteVSS {
-	return nil
+// NewSQLiteVSS returns a new sqliteVSS
+func NewSQLiteVSS(_ ...CallOptions) *sqliteVSS {
+	sql.Register("sqlite3_with_extensions", &sqlite3.SQLiteDriver{
+		Extensions: []string{
+			"json1",
+		},
+	})
+	db, err := createDatabase("test.db")
+	if err != nil {
+		panic(err)
+	}
+	return &sqliteVSS{
+		db: db,
+	}
 }
 
 // StoreVector stores the given Document
-func (vss *SQLiteVSS) StoreVector(document *types.Document) error {
+func (vss *sqliteVSS) StoreVector(document *types.Document) error {
 	return nil
 }
 
 // QuerySimilarity returns the k most similar documents to the given vector
-func (vss *SQLiteVSS) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error) {
+func (vss *sqliteVSS) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error) {
 	return nil, nil
 }
 
-// Close closes the SQLiteVSS
-func (vss *SQLiteVSS) Close() error {
+// Close closes the sqliteVSS
+func (vss *sqliteVSS) Close() error {
 	return nil
 }
 
-// Ensure that SQLiteVSS implements VectorStorer
-var _ vectorstore.VectorStorer = (*SQLiteVSS)(nil)
+// Ensure that sqliteVSS implements VectorStorer
+var _ vectorstore.VectorStorer = (*sqliteVSS)(nil)
