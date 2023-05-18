@@ -9,6 +9,8 @@ import (
 	"github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
+	"os"
+	"os/user"
 )
 
 type localStorer struct {
@@ -17,10 +19,15 @@ type localStorer struct {
 }
 
 // NewLocalStorer returns a new local storer
+// if path is empty, it will default to $HOME/memory/memory.db
 func NewLocalStorer(opts ...CallOptions) *localStorer {
-	o := applyCallOptions(opts, options{
-		path: "local.db",
-	})
+	o := applyCallOptions(opts)
+	if o.path == "" {
+		usr, _ := user.Current()
+		dir := usr.HomeDir
+		_ = os.Mkdir(fmt.Sprintf("%s/memory", dir), os.ModePerm)
+		o.path = fmt.Sprintf("%s/memory/memory.db", dir)
+	}
 	db, err := createTable(o.path)
 	if err != nil {
 		log.Fatal(err)

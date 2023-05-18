@@ -7,6 +7,8 @@ import (
 	"github.com/aldarisbm/memory/pkg/types"
 	"github.com/google/uuid"
 	bolt "go.etcd.io/bbolt"
+	"os"
+	"os/user"
 )
 
 type localStorer struct {
@@ -15,12 +17,18 @@ type localStorer struct {
 }
 
 // NewLocalStorer returns a new local storer
+// if path is empty, it will default to $HOME/memory/boltdb
 func NewLocalStorer(opts ...CallOptions) *localStorer {
 	o := applyCallOptions(opts, options{
-		path:   "localdb",
 		bucket: "ltm",
 		mode:   0600,
 	})
+	if o.path == "" {
+		usr, _ := user.Current()
+		dir := usr.HomeDir
+		_ = os.Mkdir(fmt.Sprintf("%s/memory", dir), os.ModePerm)
+		o.path = fmt.Sprintf("%s/memory/boltdb", dir)
+	}
 	dbm, err := bolt.Open(o.path, o.mode, nil)
 	if err != nil {
 		panic(err)

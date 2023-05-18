@@ -9,13 +9,10 @@ we use document.Document to represent a document, and we can add metadata if we 
 We can create a new Memory instance by providing a vector store and an embedder. A local store can be 
 provided but a default `sqlite` store will be created if not there
 
-# IMPORTANT:
-### Add `*localdb*` to your `.gitignore` file 
-
-
 It's designed with simple interfaces to be easily extended to other vector stores, embedders and datasources.
 
 ### Create a new data source:
+### If not path is given for sqlite or boltdb it will use a default path
 
 ```go
 package main
