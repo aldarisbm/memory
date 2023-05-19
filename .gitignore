@@ -1,3 +1,8 @@
+# intellij files
 .idea/
+# testing pkg
 main.go
+# conversations json
 *.json
+# db
+*.db
