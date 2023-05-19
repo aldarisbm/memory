@@ -26,7 +26,7 @@ const CreateTableSchema = `
 `
 
 func createDatabase(path string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", path)
+	db, err := sql.Open("sqlite3_with_extensions", path)
 	if err != nil {
 		return nil, fmt.Errorf("opening database: %w", err)
 	}

@@ -2,11 +2,11 @@ package sqlitevss
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/aldarisbm/memory/pkg/types"
 	"github.com/aldarisbm/memory/pkg/vectorstore"
 	"github.com/google/uuid"
 	"github.com/mattn/go-sqlite3"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 // sqliteVSS is a vector store that uses SQLite as the backend
@@ -15,16 +15,28 @@ type sqliteVSS struct {
 }
 
 // NewSQLiteVSS returns a new sqliteVSS
-func NewSQLiteVSS(_ ...CallOptions) *sqliteVSS {
+func NewSQLiteVSS(options ...CallOptions) *sqliteVSS {
 	sql.Register("sqlite3_with_extensions", &sqlite3.SQLiteDriver{
 		Extensions: []string{
-			"json1",
+			"pkg/vectorstore/sqlitevss/plugins/vector0",
+			"pkg/vectorstore/sqlitevss/plugins/vss0",
 		},
 	})
 	db, err := createDatabase("test.db")
 	if err != nil {
 		panic(err)
 	}
+
+	r, err := db.Exec(`
+		create virtual table vss_articles using vss0(
+  		headline_embedding(384),
+  		description_embedding(384),
+	);`)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%+v\n", r)
 	return &sqliteVSS{
 		db: db,
 	}
