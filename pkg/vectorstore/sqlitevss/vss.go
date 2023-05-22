@@ -28,9 +28,8 @@ func NewSQLiteVSS(options ...CallOptions) *sqliteVSS {
 	}
 
 	r, err := db.Exec(`
-		create virtual table vss_articles using vss0(
-  		headline_embedding(384),
-  		description_embedding(384),
+		create virtual table vss_documents using vss0(
+  		document_embedding(1536),
 	);`)
 	if err != nil {
 		panic(err)
