@@ -1,3 +1,6 @@
+// This conversation helpers should aid in the parsing of the json file
+// One gets once you download your ChatGPT history from OpenAI
+// This should probably be moved to a separate package, but for now it's here
 package helpers
 
 import "github.com/google/uuid"
