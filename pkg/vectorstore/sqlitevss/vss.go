@@ -2,7 +2,6 @@ package sqlitevss
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/aldarisbm/memory/pkg/types"
 	"github.com/aldarisbm/memory/pkg/vectorstore"
 	"github.com/google/uuid"
@@ -27,15 +26,6 @@ func NewSQLiteVSS(options ...CallOptions) *sqliteVSS {
 		panic(err)
 	}
 
-	r, err := db.Exec(`
-		create virtual table vss_documents using vss0(
-  		document_embedding(1536),
-	);`)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("%+v\n", r)
 	return &sqliteVSS{
 		db: db,
 	}

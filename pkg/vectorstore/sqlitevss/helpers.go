@@ -21,7 +21,12 @@ const MarkSchemaCreatedQuery = `
 const CreateTableSchema = `
 		CREATE TABLE vectors (
 			"id" uuid NOT NULL PRIMARY KEY,
-			"test" TEXT
+		);
+`
+
+const CreateVSSSchema = `
+		CREATE VIRTUAL TABLE vss_documents USING vss0(
+  		document_embedding(1536),
 		);
 `
 
@@ -49,6 +54,10 @@ func createDatabase(path string) (*sql.DB, error) {
 
 func createSchema(db *sql.DB) error {
 	_, err := db.Exec(CreateTableSchema)
+	if err != nil {
+		return fmt.Errorf("executing SQL statement: %w", err)
+	}
+	_, err = db.Exec(CreateVSSSchema)
 	if err != nil {
 		return fmt.Errorf("executing SQL statement: %w", err)
 	}
