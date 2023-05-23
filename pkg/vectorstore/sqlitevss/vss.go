@@ -32,17 +32,18 @@ func NewSQLiteVSS(options ...CallOptions) *sqliteVSS {
 }
 
 // StoreVector stores the given Document
-func (v *sqliteVSS) StoreVector(document *types.Document) error {
+func (s *sqliteVSS) StoreVector(document *types.Document) error {
+
 	return nil
 }
 
 // QuerySimilarity returns the k most similar documents to the given vector
-func (v *sqliteVSS) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error) {
+func (s *sqliteVSS) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error) {
 	return nil, nil
 }
 
 // Close closes the sqliteVSS
-func (v *sqliteVSS) Close() error {
+func (s *sqliteVSS) Close() error {
 	return nil
 }
 

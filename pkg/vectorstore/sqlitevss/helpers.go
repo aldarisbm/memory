@@ -21,6 +21,7 @@ const MarkSchemaCreatedQuery = `
 const CreateTableSchema = `
 		CREATE TABLE vectors (
 			"id" uuid NOT NULL PRIMARY KEY,
+			"document_embedding" BLOB
 		);
 `
 
@@ -28,6 +29,14 @@ const CreateVSSSchema = `
 		CREATE VIRTUAL TABLE vss_documents USING vss0(
   		document_embedding(1536),
 		);
+`
+
+const InsertQuery = `
+		INSERT INTO vss_documents(id, document_embedding)
+		  SELECT 
+			id,
+			document_embedding
+		  FROM vectors;
 `
 
 func createDatabase(path string) (*sql.DB, error) {
@@ -83,4 +92,8 @@ func markSchemaCreated(db *sql.DB) error {
 	query := MarkSchemaCreatedQuery
 	_, err := db.Exec(query)
 	return err
+}
+
+func insertIntoVectorStore(db *sql.DB) error {
+
 }

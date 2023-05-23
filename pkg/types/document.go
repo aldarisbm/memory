@@ -7,6 +7,7 @@ import (
 
 // Document is a struct that represents a document
 // in the system
+// TODO add GroupingID to document to allow for grouping
 type Document struct {
 	ID         uuid.UUID      `json:"id"`
 	User       string         `json:"user"`
