@@ -95,5 +95,5 @@ func markSchemaCreated(db *sql.DB) error {
 }
 
 func insertIntoVectorStore(db *sql.DB) error {
-
+	return nil
 }
