@@ -17,7 +17,7 @@ It's designed with simple interfaces to be easily extended to other vector store
 ```go
 package main
 
-import "github.com/aldarisbm/memory/pkg/datasource/sqlite"
+import "github.com/aldarisbm/memory/datasource/sqlite"
 
 func main() {
 	// can pass options
@@ -31,7 +31,7 @@ func main() {
 package main
 
 import (
-	oai "github.com/aldarisbm/memory/pkg/embeddings/openai"
+	oai "github.com/aldarisbm/memory/embeddings/openai"
 	"os"
 )
 
@@ -49,7 +49,7 @@ func main() {
 package main
 
 import (
-    "github.com/aldarisbm/memory/pkg/vectorstore/pinecone"
+    "github.com/aldarisbm/memory/vectorstore/pinecone"
     "os"
 )
 
@@ -73,9 +73,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/aldarisbm/memory/pkg"
-	oai "github.com/aldarisbm/memory/pkg/embeddings/openai"
-	pc "github.com/aldarisbm/memory/pkg/vectorstore/pinecone"
+	"github.com/aldarisbm/memory"
+	oai "github.com/aldarisbm/memory/embeddings/openai"
+	pc "github.com/aldarisbm/memory/vectorstore/pinecone"
 	"os"
 )
 

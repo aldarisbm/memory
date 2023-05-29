@@ -2,8 +2,8 @@ package sqlitevss
 
 import (
 	"database/sql"
-	"github.com/aldarisbm/memory/pkg/types"
-	"github.com/aldarisbm/memory/pkg/vectorstore"
+	"github.com/aldarisbm/memory/types"
+	"github.com/aldarisbm/memory/vectorstore"
 	"github.com/google/uuid"
 	"github.com/mattn/go-sqlite3"
 )

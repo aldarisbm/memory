@@ -1,4 +1,4 @@
+# intellij files
 .idea/
-main.go
-*.json
+# db
 *.db
