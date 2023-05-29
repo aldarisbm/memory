@@ -1,7 +1,7 @@
 package vectorstore
 
 import (
-	"github.com/aldarisbm/memory/pkg/types"
+	"github.com/aldarisbm/memory/types"
 	"github.com/google/uuid"
 )
 
