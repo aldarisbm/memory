@@ -2,16 +2,16 @@ package memory
 
 import (
 	"fmt"
-	"github.com/aldarisbm/memory/pkg/datasource"
-	"github.com/aldarisbm/memory/pkg/datasource/sqlite"
-	"github.com/aldarisbm/memory/pkg/embeddings"
-	"github.com/aldarisbm/memory/pkg/types"
-	"github.com/aldarisbm/memory/pkg/vectorstore"
+	"github.com/aldarisbm/memory/datasource"
+	"github.com/aldarisbm/memory/datasource/sqlite"
+	"github.com/aldarisbm/memory/embeddings"
+	"github.com/aldarisbm/memory/types"
+	"github.com/aldarisbm/memory/vectorstore"
 	"github.com/google/uuid"
 	"time"
 )
 
-// CacheSize is the size of the cache
+// CacheSize is the size of the cache for saving recent documents
 const CacheSize = 30
 
 // Memory is a long-term memory for a chatbot

@@ -1,9 +1,9 @@
 package memory
 
 import (
-	"github.com/aldarisbm/memory/pkg/datasource"
-	"github.com/aldarisbm/memory/pkg/embeddings"
-	"github.com/aldarisbm/memory/pkg/vectorstore"
+	"github.com/aldarisbm/memory/datasource"
+	"github.com/aldarisbm/memory/embeddings"
+	"github.com/aldarisbm/memory/vectorstore"
 )
 
 type options struct {

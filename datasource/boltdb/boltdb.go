@@ -3,8 +3,8 @@ package boltdb
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/aldarisbm/memory/pkg/datasource"
-	"github.com/aldarisbm/memory/pkg/types"
+	"github.com/aldarisbm/memory/datasource"
+	"github.com/aldarisbm/memory/types"
 	"github.com/google/uuid"
 	bolt "go.etcd.io/bbolt"
 	"os"
