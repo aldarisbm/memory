@@ -1,7 +1,7 @@
 # intellij files
 .idea/
 # testing pkg
-main.go
+test/main.go
 # conversations json
 *.json
 # db
