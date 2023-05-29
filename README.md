@@ -73,7 +73,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/aldarisbm/memory/pkg"
+	"github.com/aldarisbm/memory"
 	oai "github.com/aldarisbm/memory/embeddings/openai"
 	pc "github.com/aldarisbm/memory/vectorstore/pinecone"
 	"os"
