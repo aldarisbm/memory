@@ -58,6 +58,7 @@ func (m *Memory) StoreDocument(document *types.Document) error {
 }
 
 // RetrieveSimilarDocumentsByText retrieves similar documents from the Memory
+// TODO Update LastReadAt for the document when it is retrieved
 func (m *Memory) RetrieveSimilarDocumentsByText(text string, topK int64) ([]*types.Document, error) {
 	var documents []*types.Document
 
