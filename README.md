@@ -1,3 +1,6 @@
+# Disclaimer: This is a work in progress, not ready for production, there will be breaking changes
+
+
 # Memory is a long term memory implementation for golang
 
 ## Description
