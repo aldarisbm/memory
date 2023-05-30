@@ -72,11 +72,11 @@ func main() {
 package main
 
 import (
-    "fmt"
-    "github.com/aldarisbm/memory"
-    oai "github.com/aldarisbm/memory/embeddings/openai"
-    "github.com/aldarisbm/memory/vectorstore/heisenberg"
-    "os"
+        "fmt"
+        "github.com/aldarisbm/memory"
+        oai "github.com/aldarisbm/memory/embeddings/openai"
+        "github.com/aldarisbm/memory/vectorstore/heisenberg"
+        "os"
 )
 
 func main() {
