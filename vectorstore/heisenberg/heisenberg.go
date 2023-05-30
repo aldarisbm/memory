@@ -31,7 +31,8 @@ func New(opts ...CallOptions) *vectorStorer {
 	}
 
 	vs := &vectorStorer{
-		hb: heisenberg,
+		hb:         heisenberg,
+		collection: o.collection,
 	}
 	return vs
 }
