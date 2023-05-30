@@ -14,7 +14,7 @@ type vectorStorer struct {
 	collection string
 }
 
-func NewHeisenberg(opts ...CallOptions) *vectorStorer {
+func New(opts ...CallOptions) *vectorStorer {
 	o := applyCallOptions(opts, options{
 		collection: "asltm",
 		spaceType:  Cosine,
