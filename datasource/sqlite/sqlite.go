@@ -4,14 +4,12 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/aldarisbm/memory"
 	"github.com/aldarisbm/memory/datasource"
+	"github.com/aldarisbm/memory/internal"
 	"github.com/aldarisbm/memory/types"
 	"github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
-	"os"
-	"os/user"
 )
 
 type localStorer struct {
@@ -24,10 +22,7 @@ type localStorer struct {
 func NewLocalStorer(opts ...CallOptions) *localStorer {
 	o := applyCallOptions(opts)
 	if o.path == "" {
-		usr, _ := user.Current()
-		dir := usr.HomeDir
-		_ = os.Mkdir(fmt.Sprintf("%s/%s", dir, memory.DomainName), os.ModePerm)
-		o.path = fmt.Sprintf("%s/%s/memory.db", dir, memory.DomainName)
+		o.path = internal.CreateFileInHomeDir("memory.db")
 	}
 	db, err := createTable(o.path)
 	if err != nil {

@@ -1,3 +1,3 @@
-package memory
+package internal
 
 const DomainName = "xyz.memorystore"

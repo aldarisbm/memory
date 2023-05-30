@@ -1,15 +1,12 @@
 package heisenberg
 
 import (
-	"fmt"
-	"github.com/aldarisbm/memory"
+	"github.com/aldarisbm/memory/internal"
 	"github.com/aldarisbm/memory/types"
 	"github.com/aldarisbm/memory/vectorstore"
 	"github.com/google/uuid"
 	"github.com/quantanotes/heisenberg/core"
 	"github.com/quantanotes/heisenberg/utils"
-	"os"
-	"os/user"
 )
 
 type vectorStorer struct {
@@ -26,10 +23,7 @@ func NewHeisenberg(opts ...CallOptions) *vectorStorer {
 		panic("dimensions cannot be 0")
 	}
 	if o.path == "" {
-		usr, _ := user.Current()
-		dir := usr.HomeDir
-		_ = os.Mkdir(fmt.Sprintf("%s/%s", dir, memory.DomainName), os.ModePerm)
-		o.path = fmt.Sprintf("%s/%s/heisenberg", dir, memory.DomainName)
+		o.path = internal.CreateFileInHomeDir("heisenberg")
 	}
 	heisenberg := core.NewHeisenberg(o.path)
 	if err := heisenberg.NewCollection(o.collection, o.dimensions, utils.SpaceType(o.spaceType)); err != nil {
