@@ -4,13 +4,15 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
+	"os"
+	"os/user"
+	"time"
+
 	"github.com/aldarisbm/memory/datasource"
 	"github.com/aldarisbm/memory/types"
 	"github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
-	"os"
-	"os/user"
 )
 
 const DomainName = "xyz.memorystore"
@@ -69,6 +71,7 @@ func (l *localStorer) GetDocument(id uuid.UUID) (*types.Document, error) {
 	if err := json.Unmarshal(vectorBytes, &doc.Vector); err != nil {
 		return nil, fmt.Errorf("unmarshaling vector: %s", err)
 	}
+	doc.LastReadAt = time.Now()
 
 	return &doc, nil
 }
