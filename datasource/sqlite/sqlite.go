@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/aldarisbm/memory"
 	"github.com/aldarisbm/memory/datasource"
 	"github.com/aldarisbm/memory/types"
 	"github.com/google/uuid"
@@ -12,8 +13,6 @@ import (
 	"os"
 	"os/user"
 )
-
-const DomainName = "xyz.memorystore"
 
 type localStorer struct {
 	db   *sql.DB
@@ -27,8 +26,8 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 	if o.path == "" {
 		usr, _ := user.Current()
 		dir := usr.HomeDir
-		_ = os.Mkdir(fmt.Sprintf("%s/%s", dir, DomainName), os.ModePerm)
-		o.path = fmt.Sprintf("%s/%s/memory.db", dir, DomainName)
+		_ = os.Mkdir(fmt.Sprintf("%s/%s", dir, memory.DomainName), os.ModePerm)
+		o.path = fmt.Sprintf("%s/%s/memory.db", dir, memory.DomainName)
 	}
 	db, err := createTable(o.path)
 	if err != nil {

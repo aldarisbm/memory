@@ -3,6 +3,7 @@ package boltdb
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/aldarisbm/memory"
 	"github.com/aldarisbm/memory/datasource"
 	"github.com/aldarisbm/memory/types"
 	"github.com/google/uuid"
@@ -10,8 +11,6 @@ import (
 	"os"
 	"os/user"
 )
-
-const DomainName = "xyz.memorystore"
 
 type localStorer struct {
 	db         *bolt.DB
@@ -28,8 +27,8 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 	if o.path == "" {
 		usr, _ := user.Current()
 		dir := usr.HomeDir
-		_ = os.Mkdir(fmt.Sprintf("%s/%s", dir, DomainName), os.ModePerm)
-		o.path = fmt.Sprintf("%s/%s/boltdb", dir, DomainName)
+		_ = os.Mkdir(fmt.Sprintf("%s/%s", dir, memory.DomainName), os.ModePerm)
+		o.path = fmt.Sprintf("%s/%s/boltdb", dir, memory.DomainName)
 	}
 	dbm, err := bolt.Open(o.path, o.mode, nil)
 	if err != nil {
