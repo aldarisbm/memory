@@ -23,7 +23,7 @@ func NewHeisenberg(opts ...CallOptions) *vectorStorer {
 		panic("dimensions cannot be 0")
 	}
 	if o.path == "" {
-		o.path = internal.CreateFileInHomeDir("heisenberg")
+		o.path = internal.CreateFolderInsideMemoryFolder("heisenberg")
 	}
 	heisenberg := core.NewHeisenberg(o.path)
 	if err := heisenberg.NewCollection(o.collection, o.dimensions, utils.SpaceType(o.spaceType)); err != nil {

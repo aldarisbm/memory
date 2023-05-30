@@ -23,7 +23,7 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 		mode:   0600,
 	})
 	if o.path == "" {
-		o.path = internal.CreateFileInHomeDir("boltdb")
+		o.path = fmt.Sprintf("%s/%s", internal.CreateMemoryFolderInHomeDir(), "boltdb")
 	}
 	dbm, err := bolt.Open(o.path, o.mode, nil)
 	if err != nil {
