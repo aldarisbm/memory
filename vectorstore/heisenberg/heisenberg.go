@@ -31,7 +31,7 @@ func NewHeisenberg(opts ...CallOptions) *vectorStorer {
 	}
 
 	vs := &vectorStorer{
-		hb: core.NewHeisenberg(o.path),
+		hb: heisenberg,
 	}
 	return vs
 }
