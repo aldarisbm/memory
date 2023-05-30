@@ -45,7 +45,7 @@ func WithIndexName(indexName string) CallOptions {
 }
 
 // WithNamespace sets the namespace for the Pinecone client
-// asllm is the default namespace
+// asltm is the default namespace
 func WithNamespace(namespace string) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {

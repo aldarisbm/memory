@@ -1,9 +1,18 @@
 package heisenberg
 
+type SpaceType int
+
+const (
+	Ip SpaceType = iota
+	Cosine
+	L2
+)
+
 type options struct {
 	path       string
-	dimensions int
-	indexName  string
+	collection string
+	dimensions uint
+	spaceType  SpaceType
 }
 
 // CallOptions provides a way to set optional parameters to various methods
@@ -24,10 +33,34 @@ func applyCallOptions(callOptions []CallOptions, defaultOptions ...options) *opt
 	return o
 }
 
-func WithDimensions(dimensions int) CallOptions {
+func WithPath(path string) CallOptions {
+	return CallOptions{
+		applyFunc: func(o *options) {
+			o.path = path
+		},
+	}
+}
+
+func WithDimensions(dimensions uint) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
 			o.dimensions = dimensions
+		},
+	}
+}
+
+func WithSpaceType(spaceType SpaceType) CallOptions {
+	return CallOptions{
+		applyFunc: func(o *options) {
+			o.spaceType = spaceType
+		},
+	}
+}
+
+func WithCollectionName(collection string) CallOptions {
+	return CallOptions{
+		applyFunc: func(o *options) {
+			o.collection = collection
 		},
 	}
 }
