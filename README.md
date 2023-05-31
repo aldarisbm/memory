@@ -83,13 +83,13 @@ import (
 )
 
 func main() {
-	vs := heisenberg.New(heisenberg.WithDimensions(1536))
-
 	emb := oai.NewOpenAIEmbedder(
 		oai.WithApiKey(os.Getenv("OPENAI_API_KEY")),
 	)
 
-	mem := memory.NewMemory(memory.WithVectorStore(vs), memory.WithEmbedder(emb))
+	// Uses default SQLite for storage
+	// And default Heisenberg for vector store
+	mem := memory.NewMemory(memory.WithEmbedder(emb))
 	defer mem.Close()
 
 	user := "my-user"
