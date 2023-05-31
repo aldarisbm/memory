@@ -48,6 +48,8 @@ func main() {
 
 ### Create a new vector store
 
+Here we are using pinecone, but there is `heisenberg` that can run locally
+
 ```go
 package main
 
@@ -71,22 +73,24 @@ func main() {
 
 ### Example of using Memory
 
+This example will show how to use the default sqlite store, heisenberg, and possibly the local embedder
+
 ```go
 package main
 
 import (
-        "fmt"
-        "github.com/aldarisbm/memory"
-        oai "github.com/aldarisbm/memory/embeddings/openai"
-        "github.com/aldarisbm/memory/vectorstore/heisenberg"
-        "os"
+	"fmt"
+	"github.com/aldarisbm/memory"
+	"github.com/aldarisbm/memory/embeddings/local"
+	"github.com/aldarisbm/memory/vectorstore/heisenberg"
+	"os"
+	"time"
 )
 
 func main() {
-	emb := oai.NewOpenAIEmbedder(
-		oai.WithApiKey(os.Getenv("OPENAI_API_KEY")),
-	)
-
+	// for this to work you should be running something like
+	// https://github.com/aldarisbm/sentence_transformers locally
+	emb := local.New(local.WithHost("http://127.0.0.1:5000"))
 	// Uses default SQLite for storage
 	// And default Heisenberg for vector store
 	mem := memory.NewMemory(memory.WithEmbedder(emb))
@@ -121,7 +125,7 @@ func main() {
 	// the office is a good comedy show
 	// Black Mirror is a suspenseful show
 	// If we are talking about suspenseful shows, then Twilight Zone is the best
-	
+
 	// the last one being the closest to the query
 }
 ```
