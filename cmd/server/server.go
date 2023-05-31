@@ -8,7 +8,8 @@ import (
 func main() {
 	app := fiber.New()
 
-	registerRoutes(app)
+	apiV1 := app.Group("/api/v1")
+	registerApiV1Routes(apiV1)
 
 	log.Fatal(app.Listen(":3000"))
 }

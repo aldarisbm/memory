@@ -5,7 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func registerRoutes(app *fiber.App) {
+func registerApiV1Routes(app fiber.Router) {
 	// GET /api/register
 	app.Get("/api/*", func(c *fiber.Ctx) error {
 		msg := fmt.Sprintf("✋ %s", c.Params("*"))
