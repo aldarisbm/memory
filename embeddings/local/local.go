@@ -22,6 +22,9 @@ type embedder struct {
 	client            *http.Client
 }
 
+// New returns a new embedder that uses a local server to embed text
+// The local server should be running the following code for it to work properly:
+// https://github.com/aldarisbm/sentence_transformers
 func New(opts ...CallOptions) *embedder {
 	o := applyCallOptions(opts, options{
 		host:              "http://localhost:5000",
