@@ -4,14 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aldarisbm/memory/datasource"
+	"github.com/aldarisbm/memory/internal"
 	"github.com/aldarisbm/memory/types"
 	"github.com/google/uuid"
 	bolt "go.etcd.io/bbolt"
-	"os"
-	"os/user"
 )
-
-const DomainName = "xyz.memorystore"
 
 type localStorer struct {
 	db         *bolt.DB
@@ -26,10 +23,7 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 		mode:   0600,
 	})
 	if o.path == "" {
-		usr, _ := user.Current()
-		dir := usr.HomeDir
-		_ = os.Mkdir(fmt.Sprintf("%s/%s", dir, DomainName), os.ModePerm)
-		o.path = fmt.Sprintf("%s/%s/boltdb", dir, DomainName)
+		o.path = fmt.Sprintf("%s/%s", internal.CreateMemoryFolderInHomeDir(), "boltdb")
 	}
 	dbm, err := bolt.Open(o.path, o.mode, nil)
 	if err != nil {

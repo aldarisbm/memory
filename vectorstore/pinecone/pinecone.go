@@ -90,5 +90,10 @@ func (p *storer) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error)
 	return uuids, nil
 }
 
+// Close closes the storer not necessary for pinecone
+func (p *storer) Close() error {
+	return nil
+}
+
 // Ensure that storer implements VectorStorer
 var _ vectorstore.VectorStorer = (*storer)(nil)
