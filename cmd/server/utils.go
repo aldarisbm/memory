@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"github.com/aldarisbm/memory/internal"
 	bolt "go.etcd.io/bbolt"
+	"os"
 )
 
 func createKVStore() *bolt.DB {
