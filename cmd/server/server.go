@@ -6,25 +6,19 @@ import (
 	"log"
 )
 
-func main() {
-	app := fiber.New()
-
-	apiV1 := app.Group("/api/v1")
-	registerApiV1Routes(apiV1)
-
-	log.Fatal(app.Listen(":3000"))
+type Server struct {
+	db *bolt.DB
+	r  *fiber.App
 }
 
-func createKVStore() (*bolt.DB, error) {
-	dbm, err := bolt.Open(o.path, o.mode, nil)
-	if err != nil {
-		panic(err)
+func main() {
+	s := &Server{
+		db: createKVStore(),
+		r:  fiber.New(),
 	}
-	err = dbm.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists([]byte(o.bucket))
-		if err != nil {
-			return err
-		}
-		return nil
-	})
+
+	apiV1 := s.r.Group("/api/v1")
+	registerApiV1Routes(apiV1)
+
+	log.Fatal(s.r.Listen(":3000"))
 }
