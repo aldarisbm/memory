@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+// TODO kv store should be an interface
+// so we can use different implementations
 func createKVStore() *bolt.DB {
 	path := fmt.Sprintf("%s/kvstore", internal.CreateMemoryFolderInHomeDir())
 	mode := 0600
