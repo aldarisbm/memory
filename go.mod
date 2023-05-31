@@ -6,7 +6,6 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/nekomeowww/go-pinecone v0.1.0
-	github.com/quantanotes/heisenberg v0.0.0-00010101000000-000000000000
 	github.com/sashabaranov/go-openai v1.9.3
 	go.etcd.io/bbolt v1.3.7
 )
@@ -30,6 +29,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/onsi/ginkgo/v2 v2.2.0 // indirect
 	github.com/philhofer/fwd v1.1.2 // indirect
+	github.com/quantanotes/heisenberg v0.0.0-20230531123738-b2a7d56bfcdb // indirect
 	github.com/quic-go/qpack v0.4.0 // indirect
 	github.com/quic-go/qtls-go1-18 v0.2.0 // indirect
 	github.com/quic-go/qtls-go1-19 v0.2.0 // indirect
@@ -54,5 +54,3 @@ require (
 	golang.org/x/text v0.8.0 // indirect
 	golang.org/x/tools v0.6.0 // indirect
 )
-
-replace github.com/quantanotes/heisenberg => github.com/aldarisbm/heisenberg v0.0.0-20230530004545-9a4e71cdd0de

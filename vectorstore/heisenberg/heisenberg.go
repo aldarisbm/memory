@@ -10,7 +10,7 @@ import (
 )
 
 type vectorStorer struct {
-	hb         *core.Heisenberg
+	hb         *core.DB
 	collection string
 }
 
@@ -25,7 +25,7 @@ func New(opts ...CallOptions) *vectorStorer {
 	if o.path == "" {
 		o.path = internal.CreateFolderInsideMemoryFolder("heisenberg")
 	}
-	heisenberg := core.NewHeisenberg(o.path)
+	heisenberg := core.NewDB(o.path)
 	if err := heisenberg.NewCollection(o.collection, o.dimensions, utils.SpaceType(o.spaceType)); err != nil {
 		panic(err)
 	}
