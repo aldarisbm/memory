@@ -6,3 +6,6 @@ test/main.go
 *.json
 # db
 *.db
+
+# server binary
+app
