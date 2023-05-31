@@ -9,3 +9,6 @@ test/main.go
 
 # server binary
 app
+
+# bin
+bin/

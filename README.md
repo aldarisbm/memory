@@ -75,46 +75,53 @@ func main() {
 package main
 
 import (
-	"fmt"
-	"github.com/aldarisbm/memory"
-	oai "github.com/aldarisbm/memory/embeddings/openai"
-	pc "github.com/aldarisbm/memory/vectorstore/pinecone"
-	"os"
+        "fmt"
+        "github.com/aldarisbm/memory"
+        oai "github.com/aldarisbm/memory/embeddings/openai"
+        "github.com/aldarisbm/memory/vectorstore/heisenberg"
+        "os"
 )
 
 func main() {
-	vs := pc.NewStorer(
-		pc.WithApiKey(os.Getenv("PINECONE_API_KEY")),
-		pc.WithIndexName(os.Getenv("PINECONE_INDEX_NAME")),
-		pc.WithProjectName(os.Getenv("PINECONE_PROJECT_NAME")),
-		pc.WithEnvironment(os.Getenv("PINECONE_ENVIRONMENT")),
-	)
-
 	emb := oai.NewOpenAIEmbedder(
 		oai.WithApiKey(os.Getenv("OPENAI_API_KEY")),
 	)
 
-	// default local store
-	// as of right now expects both vector store and embedder
-	// in the future I'd like to use a default local embedder
-	mem := memory.NewMemory(memory.WithVectorStore(vs), memory.WithEmbedder(emb))
+	// Uses default SQLite for storage
+	// And default Heisenberg for vector store
+	mem := memory.NewMemory(memory.WithEmbedder(emb))
 	defer mem.Close()
 
-	text := "seinfield is the best comedy show in the world"
-	user := "my_user"
-
-	doc := mem.NewDocument(text, user)
-	if err := mem.StoreDocument(doc); err != nil {
-		panic(err)
+	user := "my-user"
+	texts := []string{
+		"seinfield is the best comedy show in the world",
+		"friends is an ok comedy show in the world",
+		"the office is a good comedy show",
+		"Wednesday is not really a comedy show",
+		"Black Mirror is a suspenseful show",
+		"If we are talking about suspenseful shows, then Twilight Zone is the best",
 	}
 
-	q := "what is the best show in the world?"
-	docs, err := mem.RetrieveSimilarDocumentsByText(q, 1)
+	for _, t := range texts {
+		doc := mem.NewDocument(t, user)
+		if err := mem.StoreDocument(doc); err != nil {
+			panic(err)
+		}
+	}
+
+	q := "what is a good suspenseful show?"
+	docs, err := mem.RetrieveSimilarDocumentsByText(q, 3)
 	if err != nil {
 		panic(err)
 	}
-	for _, d := range docs {
-		fmt.Printf("doc: %+v\n", d)
+	for _, doc := range docs {
+		fmt.Println(doc.Text)
 	}
+	// Output:
+	// the office is a good comedy show
+	// Black Mirror is a suspenseful show
+	// If we are talking about suspenseful shows, then Twilight Zone is the best
+	
+	// the last one being the closest to the query
 }
 ```
