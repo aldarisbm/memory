@@ -20,6 +20,7 @@ type embedder struct {
 	host              string
 	embeddingEndpoint string
 	client            *http.Client
+	DTO               *DTO
 }
 
 // New returns a new embedder that uses a local server to embed text
@@ -34,6 +35,10 @@ func New(opts ...CallOptions) *embedder {
 		host:              o.host,
 		embeddingEndpoint: o.embeddingEndpoint,
 		client:            &http.Client{},
+		DTO: &DTO{
+			Host:              o.host,
+			EmbeddingEndpoint: o.embeddingEndpoint,
+		},
 	}
 }
 func (e embedder) EmbedDocumentText(text string) ([]float32, error) {

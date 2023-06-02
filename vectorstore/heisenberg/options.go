@@ -11,7 +11,7 @@ const (
 type options struct {
 	path       string
 	collection string
-	dimensions uint
+	dimensions int
 	spaceType  SpaceType
 }
 
@@ -41,7 +41,7 @@ func WithPath(path string) CallOptions {
 	}
 }
 
-func WithDimensions(dimensions uint) CallOptions {
+func WithDimensions(dimensions int) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
 			o.dimensions = dimensions

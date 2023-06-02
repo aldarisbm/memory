@@ -13,6 +13,7 @@ import (
 type storer struct {
 	client    *pinecone.IndexClient
 	namespace string
+	DTO       *DTO
 }
 
 // NewStorer returns a new storer
@@ -32,6 +33,13 @@ func NewStorer(opts ...CallOptions) *storer {
 	return &storer{
 		client:    c,
 		namespace: o.namespace,
+		DTO: &DTO{
+			ApiKey:      o.apiKey,
+			IndexName:   o.indexName,
+			Namespace:   o.namespace,
+			ProjectName: o.projectName,
+			Environment: o.environment,
+		},
 	}
 }
 

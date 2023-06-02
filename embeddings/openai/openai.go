@@ -9,6 +9,7 @@ import (
 type embedder struct {
 	c     *openai.Client
 	model openai.EmbeddingModel
+	DTO   *DTO
 }
 
 func (e *embedder) GetDimensions() uint {
@@ -19,7 +20,7 @@ func (e *embedder) GetDimensions() uint {
 // NewOpenAIEmbedder returns an Embedder that uses OpenAI's API to embed text.
 // it always uses the AdaEmbeddingV2 model per OpenAI recommendation.
 func NewOpenAIEmbedder(opts ...CallOptions) *embedder {
-	o := applyCallOptions(opts, options{})
+	o := applyCallOptions(opts)
 	c := openai.NewClient(o.apiKey)
 	return &embedder{
 		c:     c,

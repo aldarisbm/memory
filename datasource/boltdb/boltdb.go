@@ -20,6 +20,7 @@ const (
 type localStorer struct {
 	path string
 	db   *bolt.DB
+	DTO  *DTO
 }
 
 // NewLocalStorer returns a new local storer
@@ -47,6 +48,9 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 	ls := &localStorer{
 		db:   dbm,
 		path: o.path,
+		DTO: &DTO{
+			Path: o.path,
+		},
 	}
 	return ls
 }

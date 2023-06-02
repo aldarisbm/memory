@@ -15,6 +15,7 @@ import (
 type localStorer struct {
 	db   *sql.DB
 	path string
+	DTO  *DTO
 }
 
 // NewLocalStorer returns a new local storer
@@ -32,6 +33,9 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 	ls := &localStorer{
 		db:   db,
 		path: o.path,
+		DTO: &DTO{
+			Path: o.path,
+		},
 	}
 	return ls
 }

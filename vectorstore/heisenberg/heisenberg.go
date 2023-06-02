@@ -13,6 +13,7 @@ type vectorStorer struct {
 	hb         *core.DB
 	collection string
 	path       string
+	DTO        *DTO
 }
 
 func New(opts ...CallOptions) *vectorStorer {
@@ -27,7 +28,7 @@ func New(opts ...CallOptions) *vectorStorer {
 		o.path = internal.CreateFolderInsideMemoryFolder(internal.Generate(10))
 	}
 	heisenberg := core.NewDB(o.path)
-	if err := heisenberg.NewCollection(o.collection, o.dimensions, utils.SpaceType(o.spaceType)); err != nil {
+	if err := heisenberg.NewCollection(o.collection, uint(o.dimensions), utils.SpaceType(o.spaceType)); err != nil {
 		panic(err)
 	}
 
@@ -35,6 +36,12 @@ func New(opts ...CallOptions) *vectorStorer {
 		hb:         heisenberg,
 		collection: o.collection,
 		path:       o.path,
+		DTO: &DTO{
+			Dimensions: o.dimensions,
+			Path:       o.path,
+			SpaceType:  o.spaceType,
+			Collection: o.collection,
+		},
 	}
 	return vs
 }
