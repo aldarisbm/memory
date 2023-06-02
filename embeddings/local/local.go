@@ -75,7 +75,7 @@ func (e embedder) EmbedDocumentTexts(texts []string) ([][]float32, error) {
 	return embs, nil
 }
 
-func (e embedder) GetDimensions() uint {
+func (e embedder) GetDimensions() int {
 	const SentenceTransformersDimensions = 384
 	return SentenceTransformersDimensions
 }

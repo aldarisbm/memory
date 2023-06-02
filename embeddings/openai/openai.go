@@ -12,11 +12,6 @@ type embedder struct {
 	DTO   *DTO
 }
 
-func (e *embedder) GetDimensions() uint {
-	const AdaEmbeddingV2Dimensions = 1536
-	return AdaEmbeddingV2Dimensions
-}
-
 // NewOpenAIEmbedder returns an Embedder that uses OpenAI's API to embed text.
 // it always uses the AdaEmbeddingV2 model per OpenAI recommendation.
 func NewOpenAIEmbedder(opts ...CallOptions) *embedder {
@@ -61,6 +56,11 @@ func (e *embedder) EmbedDocumentTexts(texts []string) ([][]float32, error) {
 		embs[i] = data.Embedding
 	}
 	return embs, nil
+}
+
+func (e *embedder) GetDimensions() int {
+	const AdaEmbeddingV2Dimensions = 1536
+	return AdaEmbeddingV2Dimensions
 }
 
 // Ensure embedder implements embeddings.Embedder
