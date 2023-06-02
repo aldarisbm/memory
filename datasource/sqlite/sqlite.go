@@ -22,7 +22,7 @@ type localStorer struct {
 func NewLocalStorer(opts ...CallOptions) *localStorer {
 	o := applyCallOptions(opts)
 	if o.path == "" {
-		o.path = fmt.Sprintf("%s/%s", internal.CreateMemoryFolderInHomeDir(), "memory.db")
+		o.path = fmt.Sprintf("%s/%s", internal.CreateMemoryFolderInHomeDir(), fmt.Sprintf("%s.db", internal.Generate(10)))
 	}
 	db, err := createTable(o.path)
 	if err != nil {

@@ -30,11 +30,6 @@ func NewMemory(name string, opts ...CallOptions) *Memory {
 	}
 	store := getStore()
 	defer store.close()
-	o := applyCallOptions(opts, options{
-		datasource: sqlite.NewLocalStorer(),
-		cacheSize:  CacheSize,
-	})
-
 	// check if memory exists in store
 	// TODO we might want to check that the vectorstore and embedder are of the same type
 	mem, err := store.getMemoryFromStore(name)
@@ -42,6 +37,10 @@ func NewMemory(name string, opts ...CallOptions) *Memory {
 		return mem
 	}
 
+	o := applyCallOptions(opts, options{
+		datasource: sqlite.NewLocalStorer(),
+		cacheSize:  CacheSize,
+	})
 	if o.embedder == nil {
 		panic("embedder must be provided")
 	}

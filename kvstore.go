@@ -38,39 +38,41 @@ func getStore() storer {
 }
 
 func (b *boltStore) saveMemoryToStore(name string, mem *Memory) error {
-
 	m, err := json.Marshal(mem)
 	if err != nil {
 		return err
 	}
 
 	return b.db.Update(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(BucketName))
-		v := b.Get([]byte(name))
+		bucket := tx.Bucket([]byte(BucketName))
+		v := bucket.Get([]byte(name))
 		if v != nil {
 			return fmt.Errorf("memory with name %s already exists", name)
 		}
 
-		return b.Put([]byte(name), m)
+		return bucket.Put([]byte(name), m)
 	})
 }
 
 func (b *boltStore) getMemoryFromStore(name string) (*Memory, error) {
-	var mem Memory
+	var mem *Memory
 
 	err := b.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(BucketName))
-		v := b.Get([]byte(name))
-		if v == nil {
+		bucket := tx.Bucket([]byte(BucketName))
+		v := bucket.Get([]byte(name))
+
+		if err := json.Unmarshal(v, &mem); err != nil {
+			return err
+		}
+		if mem == nil {
 			return fmt.Errorf("memory with name %s does not exist", name)
 		}
-
-		return json.Unmarshal(v, &mem)
+		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	return &mem, nil
+	return mem, nil
 }
 
 func (b *boltStore) close() error {
