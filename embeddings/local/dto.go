@@ -1,6 +1,8 @@
 package local
 
-import "github.com/aldarisbm/memory/embeddings"
+import (
+	"github.com/aldarisbm/memory/embeddings"
+)
 
 type DTO struct {
 	Host              string
@@ -13,3 +15,5 @@ func (d *DTO) ToEmbedder() embeddings.Embedder {
 		WithHost(d.Host),
 	)
 }
+
+var _ embeddings.Converter = (*DTO)(nil)

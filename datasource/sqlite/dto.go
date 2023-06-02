@@ -1,6 +1,8 @@
 package sqlite
 
-import "github.com/aldarisbm/memory/datasource"
+import (
+	"github.com/aldarisbm/memory/datasource"
+)
 
 type DTO struct {
 	Path string
@@ -11,3 +13,5 @@ func (d *DTO) ToDataSource() datasource.DataSourcer {
 		WithPath(d.Path),
 	)
 }
+
+var _ datasource.Converter = (*DTO)(nil)

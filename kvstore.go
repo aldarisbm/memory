@@ -1,7 +1,8 @@
 package memory
 
 import (
-	"encoding/json"
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"github.com/aldarisbm/memory/internal"
 	bolt "go.etcd.io/bbolt"
@@ -38,8 +39,15 @@ func getStore() storer {
 }
 
 func (b *boltStore) saveMemoryToStore(name string, mem *Memory) error {
-	m, err := json.Marshal(mem)
-	if err != nil {
+	dto := &DTO{
+		VS:  mem.vectorStore.GetDTO(),
+		Emb: mem.embedder.GetDTO(),
+		DS:  mem.datasource.GetDTO(),
+	}
+
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	if err := enc.Encode(dto); err != nil {
 		return err
 	}
 
@@ -50,29 +58,31 @@ func (b *boltStore) saveMemoryToStore(name string, mem *Memory) error {
 			return fmt.Errorf("memory with name %s already exists", name)
 		}
 
-		return bucket.Put([]byte(name), m)
+		return bucket.Put([]byte(name), buf.Bytes())
 	})
 }
 
 func (b *boltStore) getMemoryFromStore(name string) (*Memory, error) {
-	var mem *Memory
+	var dto *DTO
 
 	err := b.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(BucketName))
 		v := bucket.Get([]byte(name))
 
-		if err := json.Unmarshal(v, &mem); err != nil {
+		dec := gob.NewDecoder(bytes.NewReader(v))
+		if err := dec.Decode(dto); err != nil {
 			return err
-		}
-		if mem == nil {
-			return fmt.Errorf("memory with name %s does not exist", name)
 		}
 		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	return mem, nil
+	return &Memory{
+		vectorStore: dto.VS.ToVectorStore(),
+		embedder:    dto.Emb.ToEmbedder(),
+		datasource:  dto.DS.ToDataSource(),
+	}, nil
 }
 
 func (b *boltStore) close() error {

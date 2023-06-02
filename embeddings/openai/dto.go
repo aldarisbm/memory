@@ -11,3 +11,5 @@ func (d *DTO) ToEmbedder() embeddings.Embedder {
 		WithApiKey(d.ApiKey),
 	)
 }
+
+var _ embeddings.Converter = (*DTO)(nil)

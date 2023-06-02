@@ -17,3 +17,5 @@ func (d *DTO) ToVectorStore() vectorstore.VectorStorer {
 		WithCollectionName(d.Collection),
 	)
 }
+
+var _ vectorstore.Converter = (*DTO)(nil)

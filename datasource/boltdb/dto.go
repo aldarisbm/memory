@@ -11,3 +11,5 @@ func (d *DTO) ToDataSource() datasource.DataSourcer {
 		WithPath(d.Path),
 	)
 }
+
+var _ datasource.Converter = (*DTO)(nil)

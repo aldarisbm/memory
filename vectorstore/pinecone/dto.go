@@ -19,3 +19,5 @@ func (d *DTO) ToVectorStore() vectorstore.VectorStorer {
 		WithEnvironment(d.Environment),
 	)
 }
+
+var _ vectorstore.Converter = (*DTO)(nil)
