@@ -24,11 +24,20 @@ type Memory struct {
 }
 
 // NewMemory creates or loads a new Memory instance from the given options
-func NewMemory(opts ...CallOptions) *Memory {
+func NewMemory(name string, opts ...CallOptions) *Memory {
+	store := getStore()
 	o := applyCallOptions(opts, options{
 		datasource: sqlite.NewLocalStorer(),
 		cacheSize:  CacheSize,
 	})
+
+	// check if memory exists in store
+	// TODO we might want to check that the vectorstore and embedder are of the same type
+	mem, err := store.getMemoryFromStore(name)
+	if err == nil {
+		return mem
+	}
+
 	if o.embedder == nil {
 		panic("embedder must be provided")
 	}
@@ -38,12 +47,17 @@ func NewMemory(opts ...CallOptions) *Memory {
 			heisenberg.WithSpaceType(heisenberg.Cosine),
 		)
 	}
-	return &Memory{
+	m := &Memory{
 		embedder:    o.embedder,
 		vectorStore: o.vectorStore,
 		datasource:  o.datasource,
 		cache:       make(map[uuid.UUID]*types.Document),
 	}
+
+	if err = store.saveMemoryToStore(name, m); err != nil {
+		panic(err)
+	}
+	return m
 }
 
 // StoreDocument stores a document in the Memory

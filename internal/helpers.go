@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"os/user"
 )
@@ -23,4 +24,13 @@ func CreateFolderInsideMemoryFolder(folderName string) string {
 
 	_ = os.Mkdir(fmt.Sprintf("%s/%s/%s", dir, DomainName, folderName), os.ModePerm)
 	return fmt.Sprintf("%s/%s/%s", dir, DomainName, folderName)
+}
+
+func Generate(n int) string {
+	var chars = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321")
+	str := make([]rune, n)
+	for i := range str {
+		str[i] = chars[rand.Intn(len(chars))]
+	}
+	return string(str)
 }
