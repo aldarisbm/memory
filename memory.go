@@ -25,7 +25,11 @@ type Memory struct {
 
 // NewMemory creates or loads a new Memory instance from the given options
 func NewMemory(name string, opts ...CallOptions) *Memory {
+	if name == "" {
+		panic("name must be provided")
+	}
 	store := getStore()
+	defer store.close()
 	o := applyCallOptions(opts, options{
 		datasource: sqlite.NewLocalStorer(),
 		cacheSize:  CacheSize,

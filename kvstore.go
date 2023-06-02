@@ -38,7 +38,6 @@ func getStore() storer {
 }
 
 func (b *boltStore) saveMemoryToStore(name string, mem *Memory) error {
-	defer b.db.Close()
 
 	m, err := json.Marshal(mem)
 	if err != nil {
@@ -57,7 +56,6 @@ func (b *boltStore) saveMemoryToStore(name string, mem *Memory) error {
 }
 
 func (b *boltStore) getMemoryFromStore(name string) (*Memory, error) {
-	defer b.db.Close()
 	var mem Memory
 
 	err := b.db.View(func(tx *bolt.Tx) error {
@@ -74,3 +72,9 @@ func (b *boltStore) getMemoryFromStore(name string) (*Memory, error) {
 	}
 	return &mem, nil
 }
+
+func (b *boltStore) close() error {
+	return b.db.Close()
+}
+
+var _ storer = (*boltStore)(nil)

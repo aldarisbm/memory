@@ -11,6 +11,7 @@ import (
 )
 
 type localStorer struct {
+	name       string
 	db         *bolt.DB
 	bucketName string
 }
