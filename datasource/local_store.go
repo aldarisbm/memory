@@ -15,4 +15,11 @@ type DataSourcer interface {
 	StoreDocument(document *types.Document) error
 	// Close closes the data source
 	Close() error
+
+	// GetDTO returns the DTO of the data source
+	GetDTO() Converter
+}
+
+type Converter interface {
+	ToDataSource() DataSourcer
 }

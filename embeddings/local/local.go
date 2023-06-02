@@ -80,4 +80,8 @@ func (e embedder) GetDimensions() int {
 	return SentenceTransformersDimensions
 }
 
+func (e embedder) GetDTO() embeddings.Converter {
+	return e.DTO
+}
+
 var _ embeddings.Embedder = (*embedder)(nil)

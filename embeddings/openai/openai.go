@@ -63,5 +63,9 @@ func (e *embedder) GetDimensions() int {
 	return AdaEmbeddingV2Dimensions
 }
 
+func (e *embedder) GetDTO() embeddings.Converter {
+	return e.DTO
+}
+
 // Ensure embedder implements embeddings.Embedder
 var _ embeddings.Embedder = (*embedder)(nil)

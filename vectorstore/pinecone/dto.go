@@ -1,5 +1,7 @@
 package pc
 
+import "github.com/aldarisbm/memory/vectorstore"
+
 type DTO struct {
 	ApiKey      string
 	IndexName   string
@@ -8,7 +10,7 @@ type DTO struct {
 	Environment string
 }
 
-func (d *DTO) ToVectorStorer() *storer {
+func (d *DTO) ToVectorStore() vectorstore.VectorStorer {
 	return NewStorer(
 		WithApiKey(d.ApiKey),
 		WithIndexName(d.IndexName),

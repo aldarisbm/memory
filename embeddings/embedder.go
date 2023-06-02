@@ -8,4 +8,11 @@ type Embedder interface {
 	EmbedDocumentTexts(texts []string) ([][]float32, error)
 	// GetDimensions returns the dimensions of the embeddings
 	GetDimensions() int
+
+	// GetDTO returns the DTO of the embedder
+	GetDTO() Converter
+}
+
+type Converter interface {
+	ToEmbedder() Embedder
 }

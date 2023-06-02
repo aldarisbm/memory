@@ -109,5 +109,9 @@ func (l *localStorer) StoreDocument(document *types.Document) error {
 	return nil
 }
 
+func (l *localStorer) GetDTO() datasource.Converter {
+	return l.DTO
+}
+
 // Ensure localStorer implements DataSourcer
 var _ datasource.DataSourcer = (*localStorer)(nil)

@@ -75,4 +75,8 @@ func (h vectorStorer) Close() error {
 	return nil
 }
 
+func (h vectorStorer) GetDTO() vectorstore.Converter {
+	return h.DTO
+}
+
 var _ vectorstore.VectorStorer = (*vectorStorer)(nil)

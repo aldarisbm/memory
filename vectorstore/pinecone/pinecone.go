@@ -105,5 +105,9 @@ func (p *storer) GetNamespace() string {
 	return p.namespace
 }
 
+func (p *storer) GetDTO() vectorstore.Converter {
+	return p.DTO
+}
+
 // Ensure that storer implements VectorStorer
 var _ vectorstore.VectorStorer = (*storer)(nil)

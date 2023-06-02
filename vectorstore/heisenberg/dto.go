@@ -1,5 +1,7 @@
 package heisenberg
 
+import "github.com/aldarisbm/memory/vectorstore"
+
 type DTO struct {
 	Dimensions int
 	Path       string
@@ -7,7 +9,7 @@ type DTO struct {
 	Collection string
 }
 
-func (d *DTO) ToVectorStore() *vectorStorer {
+func (d *DTO) ToVectorStore() vectorstore.VectorStorer {
 	return New(
 		WithDimensions(d.Dimensions),
 		WithPath(d.Path),
