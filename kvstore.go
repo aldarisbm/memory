@@ -1,11 +1,10 @@
 package memory
 
 import (
-	"bytes"
-	"encoding/gob"
 	"fmt"
 	"github.com/aldarisbm/memory/internal"
 	bolt "go.etcd.io/bbolt"
+	"log"
 )
 
 type boltStore struct {
@@ -39,15 +38,21 @@ func getStore() storer {
 }
 
 func (b *boltStore) saveMemoryToStore(name string, mem *Memory) error {
-	dto := &DTO{
-		VS:  mem.vectorStore.GetDTO(),
-		Emb: mem.embedder.GetDTO(),
-		DS:  mem.datasource.GetDTO(),
+
+	vsDTO := mem.vectorStore.GetDTO()
+	embDTO := mem.embedder.GetDTO()
+	dsDTO := mem.datasource.GetDTO()
+	dto := DTO{
+		VS:      vsDTO,
+		VSType:  vsDTO.GetType(),
+		Emb:     embDTO,
+		EmbType: embDTO.GetType(),
+		DS:      dsDTO,
+		DSType:  dsDTO.GetType(),
 	}
 
-	var buf bytes.Buffer
-	enc := gob.NewEncoder(&buf)
-	if err := enc.Encode(dto); err != nil {
+	bs, err := dto.MarshallJSON()
+	if err != nil {
 		return err
 	}
 
@@ -58,24 +63,24 @@ func (b *boltStore) saveMemoryToStore(name string, mem *Memory) error {
 			return fmt.Errorf("memory with name %s already exists", name)
 		}
 
-		return bucket.Put([]byte(name), buf.Bytes())
+		return bucket.Put([]byte(name), bs)
 	})
 }
 
 func (b *boltStore) getMemoryFromStore(name string) (*Memory, error) {
-	var dto *DTO
+	var dto DTO
 
 	err := b.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(BucketName))
 		v := bucket.Get([]byte(name))
 
-		dec := gob.NewDecoder(bytes.NewReader(v))
-		if err := dec.Decode(dto); err != nil {
+		if err := dto.UnmarshalJSON(v); err != nil {
 			return err
 		}
 		return nil
 	})
 	if err != nil {
+		log.Default().Println(err)
 		return nil, err
 	}
 	return &Memory{

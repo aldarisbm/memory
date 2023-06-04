@@ -15,10 +15,11 @@ type VectorStorer interface {
 	// Close closes the vector store
 	Close() error
 
-	// Gets DTO
+	// GetDTO Gets DTO
 	GetDTO() Converter
 }
 
 type Converter interface {
 	ToVectorStore() VectorStorer
+	GetType() string
 }

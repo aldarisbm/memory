@@ -15,4 +15,5 @@ type Embedder interface {
 
 type Converter interface {
 	ToEmbedder() Embedder
+	GetType() string
 }

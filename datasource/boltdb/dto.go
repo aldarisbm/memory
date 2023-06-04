@@ -3,13 +3,17 @@ package boltdb
 import "github.com/aldarisbm/memory/datasource"
 
 type DTO struct {
-	Path string
+	Path string `json:"path"`
 }
 
 func (d *DTO) ToDataSource() datasource.DataSourcer {
 	return NewLocalStorer(
 		WithPath(d.Path),
 	)
+}
+
+func (d *DTO) GetType() string {
+	return "boltdb"
 }
 
 var _ datasource.Converter = (*DTO)(nil)

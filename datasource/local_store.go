@@ -22,4 +22,5 @@ type DataSourcer interface {
 
 type Converter interface {
 	ToDataSource() DataSourcer
+	GetType() string
 }

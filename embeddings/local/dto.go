@@ -5,8 +5,8 @@ import (
 )
 
 type DTO struct {
-	Host              string
-	EmbeddingEndpoint string
+	Host              string `json:"host"`
+	EmbeddingEndpoint string `json:"embedding_endpoint"`
 }
 
 func (d *DTO) ToEmbedder() embeddings.Embedder {
@@ -14,6 +14,10 @@ func (d *DTO) ToEmbedder() embeddings.Embedder {
 		WithEmbeddingEndpoint(d.EmbeddingEndpoint),
 		WithHost(d.Host),
 	)
+}
+
+func (d *DTO) GetType() string {
+	return "local"
 }
 
 var _ embeddings.Converter = (*DTO)(nil)

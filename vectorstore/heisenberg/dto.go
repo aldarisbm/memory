@@ -3,10 +3,10 @@ package heisenberg
 import "github.com/aldarisbm/memory/vectorstore"
 
 type DTO struct {
-	Dimensions int
-	Path       string
-	SpaceType  SpaceType
-	Collection string
+	Dimensions int       `json:"dimensions"`
+	Path       string    `json:"path"`
+	SpaceType  SpaceType `json:"space_type"`
+	Collection string    `json:"collection"`
 }
 
 func (d *DTO) ToVectorStore() vectorstore.VectorStorer {
@@ -16,6 +16,10 @@ func (d *DTO) ToVectorStore() vectorstore.VectorStorer {
 		WithSpaceType(d.SpaceType),
 		WithCollectionName(d.Collection),
 	)
+}
+
+func (d *DTO) GetType() string {
+	return "heisenberg"
 }
 
 var _ vectorstore.Converter = (*DTO)(nil)

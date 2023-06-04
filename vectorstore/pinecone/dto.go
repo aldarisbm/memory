@@ -3,11 +3,11 @@ package pc
 import "github.com/aldarisbm/memory/vectorstore"
 
 type DTO struct {
-	ApiKey      string
-	IndexName   string
-	Namespace   string
-	ProjectName string
-	Environment string
+	ApiKey      string `json:"api_key"`
+	IndexName   string `json:"index_name"`
+	Namespace   string `json:"namespace"`
+	ProjectName string `json:"project_name"`
+	Environment string `json:"environment"`
 }
 
 func (d *DTO) ToVectorStore() vectorstore.VectorStorer {
@@ -18,6 +18,10 @@ func (d *DTO) ToVectorStore() vectorstore.VectorStorer {
 		WithProjectName(d.ProjectName),
 		WithEnvironment(d.Environment),
 	)
+}
+
+func (d *DTO) GetType() string {
+	return "pinecone"
 }
 
 var _ vectorstore.Converter = (*DTO)(nil)
