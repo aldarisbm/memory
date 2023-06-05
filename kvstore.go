@@ -3,6 +3,8 @@ package memory
 import (
 	"fmt"
 	"github.com/aldarisbm/memory/internal"
+	"github.com/aldarisbm/memory/types"
+	"github.com/google/uuid"
 	bolt "go.etcd.io/bbolt"
 	"log"
 )
@@ -87,6 +89,7 @@ func (b *boltStore) getMemoryFromStore(name string) (*Memory, error) {
 		vectorStore: dto.VS.ToVectorStore(),
 		embedder:    dto.Emb.ToEmbedder(),
 		datasource:  dto.DS.ToDataSource(),
+		cache:       make(map[uuid.UUID]*types.Document),
 	}, nil
 }
 
