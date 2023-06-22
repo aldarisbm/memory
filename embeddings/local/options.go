@@ -1,10 +1,10 @@
-package oai
+package local
 
 type options struct {
-	apiKey string
+	host              string
+	embeddingEndpoint string
 }
 
-// CallOptions are the options for the Embedder.
 type CallOptions struct {
 	applyFunc func(o *options)
 }
@@ -22,11 +22,19 @@ func applyCallOptions(callOptions []CallOptions, defaultOptions ...options) *opt
 	return o
 }
 
-// WithApiKey sets the OpenAI API key for the Embedder.
-func WithApiKey(apiKey string) CallOptions {
+// WithHost sets the host for the Embedder.
+func WithHost(host string) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
-			o.apiKey = apiKey
+			o.host = host
+		},
+	}
+}
+
+func WithEmbeddingEndpoint(endpoint string) CallOptions {
+	return CallOptions{
+		applyFunc: func(o *options) {
+			o.embeddingEndpoint = endpoint
 		},
 	}
 }

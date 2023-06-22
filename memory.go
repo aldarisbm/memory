@@ -9,6 +9,7 @@ import (
 	"github.com/aldarisbm/memory/embeddings"
 	"github.com/aldarisbm/memory/types"
 	"github.com/aldarisbm/memory/vectorstore"
+	"github.com/aldarisbm/memory/vectorstore/heisenberg"
 	"github.com/google/uuid"
 )
 
@@ -29,9 +30,14 @@ func NewMemory(opts ...CallOptions) *Memory {
 		datasource: sqlite.NewLocalStorer(),
 		cacheSize:  CacheSize,
 	})
-
-	if o.embedder == nil || o.vectorStore == nil {
-		panic("embedder and vector store must be provided")
+	if o.embedder == nil {
+		panic("embedder must be provided")
+	}
+	if o.vectorStore == nil {
+		o.vectorStore = heisenberg.New(
+			heisenberg.WithDimensions(o.embedder.GetDimensions()),
+			heisenberg.WithSpaceType(heisenberg.Cosine),
+		)
 	}
 	return &Memory{
 		embedder:    o.embedder,

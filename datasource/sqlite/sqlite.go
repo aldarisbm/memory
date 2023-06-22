@@ -10,12 +10,11 @@ import (
 	"time"
 
 	"github.com/aldarisbm/memory/datasource"
+	"github.com/aldarisbm/memory/internal"
 	"github.com/aldarisbm/memory/types"
 	"github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
 )
-
-const DomainName = "xyz.memorystore"
 
 type localStorer struct {
 	db   *sql.DB
@@ -27,10 +26,7 @@ type localStorer struct {
 func NewLocalStorer(opts ...CallOptions) *localStorer {
 	o := applyCallOptions(opts)
 	if o.path == "" {
-		usr, _ := user.Current()
-		dir := usr.HomeDir
-		_ = os.Mkdir(fmt.Sprintf("%s/%s", dir, DomainName), os.ModePerm)
-		o.path = fmt.Sprintf("%s/%s/memory.db", dir, DomainName)
+		o.path = fmt.Sprintf("%s/%s", internal.CreateMemoryFolderInHomeDir(), "memory.db")
 	}
 	db, err := createTable(o.path)
 	if err != nil {
