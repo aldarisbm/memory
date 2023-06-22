@@ -71,8 +71,10 @@ func (l *localStorer) GetDocument(id uuid.UUID) (*types.Document, error) {
 	if err := json.Unmarshal(vectorBytes, &doc.Vector); err != nil {
 		return nil, fmt.Errorf("unmarshaling vector: %s", err)
 	}
-	doc.LastReadAt = time.Now()
-
+	err = l.UpdateLastReadAt(&doc)
+	if err != nil {
+		return nil, err
+	}
 	return &doc, nil
 }
 
@@ -114,6 +116,16 @@ func (l *localStorer) StoreDocument(doc *types.Document) error {
 	_, err = res.LastInsertId()
 	if err != nil {
 		return fmt.Errorf("getting last insert id: %s", err)
+	}
+	return nil
+}
+
+// UpdateLastReadAt updates the last read at timestamp for the given document
+func (l *localStorer) UpdateLastReadAt(doc *types.Document) error {
+	if time.Now().After(doc.LastReadAt) {
+		doc.LastReadAt = time.Now() // Update prevTime with the new current time
+	} else {
+		return fmt.Errorf("error in updating LastReadAt time")
 	}
 	return nil
 }

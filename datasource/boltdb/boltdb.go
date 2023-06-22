@@ -3,12 +3,14 @@ package boltdb
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"os/user"
+	"time"
+
 	"github.com/aldarisbm/memory/datasource"
 	"github.com/aldarisbm/memory/types"
 	"github.com/google/uuid"
 	bolt "go.etcd.io/bbolt"
-	"os"
-	"os/user"
 )
 
 const DomainName = "xyz.memorystore"
@@ -73,6 +75,10 @@ func (l *localStorer) GetDocument(id uuid.UUID) (*types.Document, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = l.UpdateLastReadAt(&doc)
+	if err != nil {
+		return nil, err
+	}
 	return &doc, nil
 }
 
@@ -103,6 +109,16 @@ func (l *localStorer) StoreDocument(document *types.Document) error {
 	})
 	if err != nil {
 		return fmt.Errorf("updating bolt db: %s", err)
+	}
+	return nil
+}
+
+// UpdateLastReadAt updates the last read at timestamp for the given document
+func (l *localStorer) UpdateLastReadAt(doc *types.Document) error {
+	if time.Now().After(doc.LastReadAt) {
+		doc.LastReadAt = time.Now() // Update prevTime with the new current time
+	} else {
+		return fmt.Errorf("error in updating LastReadAt time")
 	}
 	return nil
 }

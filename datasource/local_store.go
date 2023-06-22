@@ -13,6 +13,8 @@ type DataSourcer interface {
 	GetDocuments(ids []uuid.UUID) ([]*types.Document, error)
 	// StoreDocument stores the given document
 	StoreDocument(document *types.Document) error
+	// UpdateLastReadAt updates the last read at timestamp for the given document
+	UpdateLastReadAt(document *types.Document) error
 	// Close closes the data source
 	Close() error
 }
