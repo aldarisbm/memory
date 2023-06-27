@@ -14,4 +14,12 @@ type VectorStorer interface {
 	QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error)
 	// Close closes the vector store
 	Close() error
+
+	// GetDTO Gets DTO
+	GetDTO() Converter
+}
+
+type Converter interface {
+	ToVectorStore() VectorStorer
+	GetType() string
 }

@@ -8,29 +8,34 @@ import (
 	"github.com/aldarisbm/memory/types"
 	"github.com/google/uuid"
 	bolt "go.etcd.io/bbolt"
+	"os"
+)
+
+// bucketName is always the same
+const (
+	bucketName = "ltm"
+	mode       = os.ModePerm
 )
 
 type localStorer struct {
-	db         *bolt.DB
-	bucketName string
+	path string
+	db   *bolt.DB
+	DTO  *DTO
 }
 
 // NewLocalStorer returns a new local storer
 // if path is empty, it will default to $HOME/memory/boltdb
 func NewLocalStorer(opts ...CallOptions) *localStorer {
-	o := applyCallOptions(opts, options{
-		bucket: "ltm",
-		mode:   0600,
-	})
+	o := applyCallOptions(opts)
 	if o.path == "" {
-		o.path = fmt.Sprintf("%s/%s", internal.CreateMemoryFolderInHomeDir(), "boltdb")
+		o.path = fmt.Sprintf("%s/%s", internal.CreateMemoryFolderInHomeDir(), internal.Generate(10))
 	}
-	dbm, err := bolt.Open(o.path, o.mode, nil)
+	dbm, err := bolt.Open(o.path, mode, nil)
 	if err != nil {
 		panic(err)
 	}
 	err = dbm.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists([]byte(o.bucket))
+		_, err := tx.CreateBucketIfNotExists([]byte(bucketName))
 		if err != nil {
 			return err
 		}
@@ -41,8 +46,11 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 	}
 
 	ls := &localStorer{
-		db:         dbm,
-		bucketName: o.bucket,
+		db:   dbm,
+		path: o.path,
+		DTO: &DTO{
+			Path: o.path,
+		},
 	}
 	return ls
 }
@@ -56,7 +64,7 @@ func (l *localStorer) Close() error {
 func (l *localStorer) GetDocument(id uuid.UUID) (*types.Document, error) {
 	var doc types.Document
 	err := l.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(l.bucketName))
+		b := tx.Bucket([]byte(bucketName))
 		v := b.Get([]byte(id.String()))
 		err := json.Unmarshal(v, &doc)
 		if err != nil {
@@ -91,7 +99,7 @@ func (l *localStorer) StoreDocument(document *types.Document) error {
 		return fmt.Errorf("marshaling document: %s", err)
 	}
 	err = l.db.Update(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(l.bucketName))
+		b := tx.Bucket([]byte(bucketName))
 		err := b.Put([]byte(document.ID.String()), doc)
 		return err
 	})
@@ -99,6 +107,10 @@ func (l *localStorer) StoreDocument(document *types.Document) error {
 		return fmt.Errorf("updating bolt db: %s", err)
 	}
 	return nil
+}
+
+func (l *localStorer) GetDTO() datasource.Converter {
+	return l.DTO
 }
 
 // Ensure localStorer implements DataSourcer

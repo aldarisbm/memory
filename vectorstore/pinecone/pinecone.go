@@ -3,25 +3,24 @@ package pc
 import (
 	"context"
 	"fmt"
+	"github.com/aldarisbm/memory/internal"
 	"github.com/aldarisbm/memory/types"
 	"github.com/aldarisbm/memory/vectorstore"
 	"github.com/google/uuid"
 	"github.com/nekomeowww/go-pinecone"
 )
 
-const Namespace = "asltm"
-
 type storer struct {
 	client    *pinecone.IndexClient
 	namespace string
+	DTO       *DTO
 }
 
 // NewStorer returns a new storer
 func NewStorer(opts ...CallOptions) *storer {
 	o := applyCallOptions(opts, options{
-		namespace: Namespace,
+		namespace: internal.Generate(10),
 	})
-	// TODO we should be able to create a new index if it doesn't exist
 	c, err := pinecone.NewIndexClient(
 		pinecone.WithAPIKey(o.apiKey),
 		pinecone.WithIndexName(o.indexName),
@@ -34,6 +33,13 @@ func NewStorer(opts ...CallOptions) *storer {
 	return &storer{
 		client:    c,
 		namespace: o.namespace,
+		DTO: &DTO{
+			ApiKey:      o.apiKey,
+			IndexName:   o.indexName,
+			Namespace:   o.namespace,
+			ProjectName: o.projectName,
+			Environment: o.environment,
+		},
 	}
 }
 
@@ -93,6 +99,14 @@ func (p *storer) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error)
 // Close closes the storer not necessary for pinecone
 func (p *storer) Close() error {
 	return nil
+}
+
+func (p *storer) GetNamespace() string {
+	return p.namespace
+}
+
+func (p *storer) GetDTO() vectorstore.Converter {
+	return p.DTO
 }
 
 // Ensure that storer implements VectorStorer
