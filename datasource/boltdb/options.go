@@ -1,4 +1,4 @@
-package boltdb
+package boltds
 
 type options struct {
 	path string

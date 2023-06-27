@@ -1,4 +1,4 @@
-package oai
+package oaiembedder
 
 import "github.com/aldarisbm/memory/embeddings"
 
@@ -7,7 +7,7 @@ type DTO struct {
 }
 
 func (d *DTO) ToEmbedder() embeddings.Embedder {
-	return NewOpenAIEmbedder(
+	return New(
 		WithApiKey(d.ApiKey),
 	)
 }

@@ -1,4 +1,4 @@
-package local
+package localembedder
 
 type options struct {
 	host              string

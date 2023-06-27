@@ -23,8 +23,8 @@ type Memory struct {
 	cache       map[uuid.UUID]*types.Document
 }
 
-// NewMemory creates or loads a new Memory instance from the given options
-func NewMemory(name string, opts ...CallOptions) *Memory {
+// New creates or loads a new Memory instance from the given options
+func New(name string, opts ...CallOptions) *Memory {
 	if name == "" {
 		panic("name must be provided")
 	}
@@ -38,16 +38,16 @@ func NewMemory(name string, opts ...CallOptions) *Memory {
 	}
 
 	o := applyCallOptions(opts, options{
-		datasource: sqlite.NewLocalStorer(),
+		datasource: sqliteds.New(),
 		cacheSize:  CacheSize,
 	})
 	if o.embedder == nil {
 		panic("embedder must be provided")
 	}
 	if o.vectorStore == nil {
-		o.vectorStore = heisenberg.New(
-			heisenberg.WithDimensions(o.embedder.GetDimensions()),
-			heisenberg.WithSpaceType(heisenberg.Cosine),
+		o.vectorStore = heisenbergvs.New(
+			heisenbergvs.WithDimensions(o.embedder.GetDimensions()),
+			heisenbergvs.WithSpaceType(heisenbergvs.Cosine),
 		)
 	}
 	m := &Memory{

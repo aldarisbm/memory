@@ -1,4 +1,4 @@
-package sqlite
+package sqliteds
 
 import (
 	"database/sql"
@@ -12,15 +12,15 @@ import (
 	"log"
 )
 
-type localStorer struct {
+type sqliteds struct {
 	db   *sql.DB
 	path string
 	DTO  *DTO
 }
 
-// NewLocalStorer returns a new local storer
+// New returns a new local storer
 // if path is empty, it will default to $HOME/memory/memory.db
-func NewLocalStorer(opts ...CallOptions) *localStorer {
+func New(opts ...CallOptions) *sqliteds {
 	o := applyCallOptions(opts)
 	if o.path == "" {
 		o.path = fmt.Sprintf("%s/%s", internal.CreateMemoryFolderInHomeDir(), fmt.Sprintf("%s.db", internal.Generate(10)))
@@ -30,7 +30,7 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 		log.Fatal(err)
 	}
 
-	ls := &localStorer{
+	ls := &sqliteds{
 		db:   db,
 		path: o.path,
 		DTO: &DTO{
@@ -41,15 +41,15 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 }
 
 // Close closes the local storer
-func (l *localStorer) Close() error {
-	return l.db.Close()
+func (s *sqliteds) Close() error {
+	return s.db.Close()
 }
 
 // GetDocument returns the document with the given id
-func (l *localStorer) GetDocument(id uuid.UUID) (*types.Document, error) {
+func (s *sqliteds) GetDocument(id uuid.UUID) (*types.Document, error) {
 	var doc types.Document
 
-	stmt, err := l.db.Prepare("SELECT id, user, text, created_at, last_read_at, vector, metadata FROM documents WHERE id=?")
+	stmt, err := s.db.Prepare("SELECT id, user, text, created_at, last_read_at, vector, metadata FROM documents WHERE id=?")
 	if err != nil {
 		return nil, err
 	}
@@ -72,12 +72,12 @@ func (l *localStorer) GetDocument(id uuid.UUID) (*types.Document, error) {
 }
 
 // GetDocuments returns the documents with the given ids
-func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*types.Document, error) {
+func (s *sqliteds) GetDocuments(ids []uuid.UUID) ([]*types.Document, error) {
 	// TODO should probably do this in a single query
 	var docs []*types.Document
 
 	for _, id := range ids {
-		doc, err := l.GetDocument(id)
+		doc, err := s.GetDocument(id)
 		if err != nil {
 			return nil, err
 		}
@@ -88,8 +88,8 @@ func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*types.Document, error) {
 
 // StoreDocument stores the given document
 // We marshal the vector and metadata to []byte and store them as blobs
-func (l *localStorer) StoreDocument(doc *types.Document) error {
-	stmt, err := l.db.Prepare("INSERT INTO documents (id, user,  text, created_at, last_read_at, vector, metadata) VALUES (?, ?, ?, ?, ?, ?, ?)")
+func (s *sqliteds) StoreDocument(doc *types.Document) error {
+	stmt, err := s.db.Prepare("INSERT INTO documents (id, user,  text, created_at, last_read_at, vector, metadata) VALUES (?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return fmt.Errorf("preparing statement: %s", err)
 	}
@@ -114,9 +114,9 @@ func (l *localStorer) StoreDocument(doc *types.Document) error {
 }
 
 // GetDTO returns the DTO of the local storer
-func (l *localStorer) GetDTO() datasource.Converter {
-	return l.DTO
+func (s *sqliteds) GetDTO() datasource.Converter {
+	return s.DTO
 }
 
-// Ensure localStorer implements DataSourcer
-var _ datasource.DataSourcer = (*localStorer)(nil)
+// Ensure sqliteds implements DataSourcer
+var _ datasource.DataSourcer = (*sqliteds)(nil)
