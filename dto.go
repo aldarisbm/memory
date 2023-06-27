@@ -54,7 +54,7 @@ func (d *DTO) UnmarshalJSON(b []byte) error {
 
 	switch tmpStruct.VsType {
 	case "heisenberg":
-		d.VS = &heisenberg.DTO{}
+		d.VS = &heisenbergvs.DTO{}
 	case "pinecone":
 		d.VS = &pc.DTO{}
 	default:
@@ -68,7 +68,7 @@ func (d *DTO) UnmarshalJSON(b []byte) error {
 	case "openai":
 		d.Emb = &oai.DTO{}
 	case "local":
-		d.Emb = &local.DTO{}
+		d.Emb = &localembedder.DTO{}
 	default:
 		return ErrInvalidEmbedderType
 	}
@@ -78,9 +78,9 @@ func (d *DTO) UnmarshalJSON(b []byte) error {
 
 	switch tmpStruct.DSType {
 	case "boltdb":
-		d.DS = &boltdb.DTO{}
+		d.DS = &boltds.DTO{}
 	case "sqlite":
-		d.DS = &sqlite.DTO{}
+		d.DS = &sqliteds.DTO{}
 	default:
 		return ErrInvalidDataSourceType
 	}

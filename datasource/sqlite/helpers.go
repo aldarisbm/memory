@@ -1,4 +1,4 @@
-package sqlite
+package sqliteds
 
 import (
 	"database/sql"

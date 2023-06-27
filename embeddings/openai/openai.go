@@ -1,4 +1,4 @@
-package oai
+package oaiembedder
 
 import (
 	"context"
@@ -12,9 +12,9 @@ type embedder struct {
 	DTO   *DTO
 }
 
-// NewOpenAIEmbedder returns an Embedder that uses OpenAI's API to embed text.
+// New returns an Embedder that uses OpenAI's API to embed text.
 // it always uses the AdaEmbeddingV2 model per OpenAI recommendation.
-func NewOpenAIEmbedder(opts ...CallOptions) *embedder {
+func New(opts ...CallOptions) *embedder {
 	o := applyCallOptions(opts)
 	c := openai.NewClient(o.apiKey)
 	return &embedder{

@@ -20,11 +20,11 @@ It's designed with simple interfaces to be easily extended to other vector store
 ```go
 package main
 
-import "github.com/aldarisbm/memory/datasource/sqlite"
+import "github.com/aldarisbm/memory/datasource/sqliteds"
 
 func main() {
 	// can pass options
-	ls := sqlite.NewLocalStorer()
+	ls := sqliteds.NewLocalStorer()
 }
 ```
 
