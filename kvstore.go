@@ -40,7 +40,6 @@ func getStore() storer {
 }
 
 func (b *boltStore) saveMemoryToStore(name string, mem *Memory) error {
-
 	vsDTO := mem.vectorStore.GetDTO()
 	embDTO := mem.embedder.GetDTO()
 	dsDTO := mem.datasource.GetDTO()

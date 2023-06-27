@@ -28,7 +28,8 @@ type embedder struct {
 // https://github.com/aldarisbm/sentence_transformers
 func New(opts ...CallOptions) *embedder {
 	o := applyCallOptions(opts, options{
-		host:              "http://localhost:5000",
+		// listening on 5050 bc apple uses 5000 for AirPlay
+		host:              "http://localhost:5050",
 		embeddingEndpoint: "/embeddings",
 	})
 	return &embedder{
@@ -41,6 +42,7 @@ func New(opts ...CallOptions) *embedder {
 		},
 	}
 }
+
 func (e embedder) EmbedDocumentText(text string) ([]float32, error) {
 	req := request{
 		Text: text,
