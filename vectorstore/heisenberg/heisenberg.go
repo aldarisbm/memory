@@ -10,8 +10,11 @@ import (
 )
 
 type vectorStorer struct {
-	hb         *core.DB
-	collection string
+	hb          *core.DB
+	collection  string
+	path        string
+	hasBeenInit bool
+	DTO         *DTO
 }
 
 func New(opts ...CallOptions) *vectorStorer {
@@ -23,16 +26,27 @@ func New(opts ...CallOptions) *vectorStorer {
 		panic("dimensions cannot be 0")
 	}
 	if o.path == "" {
-		o.path = internal.CreateFolderInsideMemoryFolder("heisenberg")
+		o.path = internal.CreateFolderInsideMemoryFolder(internal.Generate(10))
 	}
 	heisenberg := core.NewDB(o.path)
-	if err := heisenberg.NewCollection(o.collection, o.dimensions, utils.SpaceType(o.spaceType)); err != nil {
-		panic(err)
+	if !o.hasBeenInit {
+		if err := heisenberg.NewCollection(o.collection, uint(o.dimensions), utils.SpaceType(o.spaceType)); err != nil {
+			panic(err)
+		}
 	}
 
 	vs := &vectorStorer{
-		hb:         heisenberg,
-		collection: o.collection,
+		hb:          heisenberg,
+		collection:  o.collection,
+		path:        o.path,
+		hasBeenInit: true,
+		DTO: &DTO{
+			Dimensions:  o.dimensions,
+			Path:        o.path,
+			SpaceType:   o.spaceType,
+			Collection:  o.collection,
+			HasBeenInit: true,
+		},
 	}
 	return vs
 }
@@ -64,6 +78,10 @@ func (h vectorStorer) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, e
 func (h vectorStorer) Close() error {
 	h.hb.Close()
 	return nil
+}
+
+func (h vectorStorer) GetDTO() vectorstore.Converter {
+	return h.DTO
 }
 
 var _ vectorstore.VectorStorer = (*vectorStorer)(nil)

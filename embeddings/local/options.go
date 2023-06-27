@@ -1,7 +1,8 @@
-package boltdb
+package local
 
 type options struct {
-	path string
+	host              string
+	embeddingEndpoint string
 }
 
 type CallOptions struct {
@@ -21,10 +22,19 @@ func applyCallOptions(callOptions []CallOptions, defaultOptions ...options) *opt
 	return o
 }
 
-func WithPath(path string) CallOptions {
+// WithHost sets the host for the Embedder.
+func WithHost(host string) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
-			o.path = path
+			o.host = host
+		},
+	}
+}
+
+func WithEmbeddingEndpoint(endpoint string) CallOptions {
+	return CallOptions{
+		applyFunc: func(o *options) {
+			o.embeddingEndpoint = endpoint
 		},
 	}
 }

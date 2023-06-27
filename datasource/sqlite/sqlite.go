@@ -15,6 +15,7 @@ import (
 type localStorer struct {
 	db   *sql.DB
 	path string
+	DTO  *DTO
 }
 
 // NewLocalStorer returns a new local storer
@@ -22,7 +23,7 @@ type localStorer struct {
 func NewLocalStorer(opts ...CallOptions) *localStorer {
 	o := applyCallOptions(opts)
 	if o.path == "" {
-		o.path = fmt.Sprintf("%s/%s", internal.CreateMemoryFolderInHomeDir(), "memory.db")
+		o.path = fmt.Sprintf("%s/%s", internal.CreateMemoryFolderInHomeDir(), fmt.Sprintf("%s.db", internal.Generate(10)))
 	}
 	db, err := createTable(o.path)
 	if err != nil {
@@ -32,6 +33,9 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 	ls := &localStorer{
 		db:   db,
 		path: o.path,
+		DTO: &DTO{
+			Path: o.path,
+		},
 	}
 	return ls
 }
@@ -107,6 +111,11 @@ func (l *localStorer) StoreDocument(doc *types.Document) error {
 		return fmt.Errorf("getting last insert id: %s", err)
 	}
 	return nil
+}
+
+// GetDTO returns the DTO of the local storer
+func (l *localStorer) GetDTO() datasource.Converter {
+	return l.DTO
 }
 
 // Ensure localStorer implements DataSourcer
