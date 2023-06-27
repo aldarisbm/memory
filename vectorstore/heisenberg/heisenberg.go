@@ -10,10 +10,11 @@ import (
 )
 
 type vectorStorer struct {
-	hb         *core.DB
-	collection string
-	path       string
-	DTO        *DTO
+	hb          *core.DB
+	collection  string
+	path        string
+	hasBeenInit bool
+	DTO         *DTO
 }
 
 func New(opts ...CallOptions) *vectorStorer {
@@ -28,19 +29,23 @@ func New(opts ...CallOptions) *vectorStorer {
 		o.path = internal.CreateFolderInsideMemoryFolder(internal.Generate(10))
 	}
 	heisenberg := core.NewDB(o.path)
-	if err := heisenberg.NewCollection(o.collection, uint(o.dimensions), utils.SpaceType(o.spaceType)); err != nil {
-		panic(err)
+	if !o.hasBeenInit {
+		if err := heisenberg.NewCollection(o.collection, uint(o.dimensions), utils.SpaceType(o.spaceType)); err != nil {
+			panic(err)
+		}
 	}
 
 	vs := &vectorStorer{
-		hb:         heisenberg,
-		collection: o.collection,
-		path:       o.path,
+		hb:          heisenberg,
+		collection:  o.collection,
+		path:        o.path,
+		hasBeenInit: true,
 		DTO: &DTO{
-			Dimensions: o.dimensions,
-			Path:       o.path,
-			SpaceType:  o.spaceType,
-			Collection: o.collection,
+			Dimensions:  o.dimensions,
+			Path:        o.path,
+			SpaceType:   o.spaceType,
+			Collection:  o.collection,
+			HasBeenInit: true,
 		},
 	}
 	return vs

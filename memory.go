@@ -129,7 +129,9 @@ func (m *Memory) NewDocument(text string, user string) *types.Document {
 
 // Close closes the Memory
 func (m *Memory) Close() error {
-	return m.datasource.Close()
+	m.datasource.Close()
+	m.vectorStore.Close()
+	return nil
 }
 
 // addToCache adds a document to the cache

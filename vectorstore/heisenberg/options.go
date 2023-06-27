@@ -9,10 +9,11 @@ const (
 )
 
 type options struct {
-	path       string
-	collection string
-	dimensions int
-	spaceType  SpaceType
+	path        string
+	collection  string
+	dimensions  int
+	spaceType   SpaceType
+	hasBeenInit bool
 }
 
 // CallOptions provides a way to set optional parameters to various methods
@@ -61,6 +62,14 @@ func WithCollectionName(collection string) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
 			o.collection = collection
+		},
+	}
+}
+
+func WithHasBeenInit(hasBeenInit bool) CallOptions {
+	return CallOptions{
+		applyFunc: func(o *options) {
+			o.hasBeenInit = hasBeenInit
 		},
 	}
 }
