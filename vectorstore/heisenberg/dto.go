@@ -1,4 +1,4 @@
-package heisenberg
+package heisenbergvs
 
 import "github.com/aldarisbm/memory/vectorstore"
 

@@ -1,4 +1,4 @@
-package boltdb
+package boltds
 
 import "github.com/aldarisbm/memory/datasource"
 
@@ -7,7 +7,7 @@ type DTO struct {
 }
 
 func (d *DTO) ToDataSource() datasource.DataSourcer {
-	return NewLocalStorer(
+	return New(
 		WithPath(d.Path),
 	)
 }

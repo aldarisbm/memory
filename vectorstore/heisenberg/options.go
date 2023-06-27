@@ -1,4 +1,4 @@
-package heisenberg
+package heisenbergvs
 
 type SpaceType int
 

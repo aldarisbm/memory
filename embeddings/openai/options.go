@@ -1,4 +1,4 @@
-package oai
+package oaiembedder
 
 type options struct {
 	apiKey string

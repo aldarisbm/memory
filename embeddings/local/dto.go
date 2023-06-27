@@ -1,4 +1,4 @@
-package local
+package localembedder
 
 import (
 	"github.com/aldarisbm/memory/embeddings"

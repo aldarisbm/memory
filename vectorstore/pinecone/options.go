@@ -1,4 +1,4 @@
-package pc
+package pineconevs
 
 type options struct {
 	apiKey      string

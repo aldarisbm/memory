@@ -1,4 +1,4 @@
-package pc
+package pineconevs
 
 import "github.com/aldarisbm/memory/vectorstore"
 
@@ -11,7 +11,7 @@ type DTO struct {
 }
 
 func (d *DTO) ToVectorStore() vectorstore.VectorStorer {
-	return NewStorer(
+	return New(
 		WithApiKey(d.ApiKey),
 		WithIndexName(d.IndexName),
 		WithNamespace(d.Namespace),
