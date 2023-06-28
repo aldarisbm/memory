@@ -1,27 +1,26 @@
-package pc
+package pineconevs
 
 import (
 	"context"
 	"fmt"
+	"github.com/aldarisbm/memory/internal"
 	"github.com/aldarisbm/memory/types"
 	"github.com/aldarisbm/memory/vectorstore"
 	"github.com/google/uuid"
 	"github.com/nekomeowww/go-pinecone"
 )
 
-const Namespace = "asltm"
-
-type storer struct {
+type pineconevs struct {
 	client    *pinecone.IndexClient
 	namespace string
+	DTO       *DTO
 }
 
-// NewStorer returns a new storer
-func NewStorer(opts ...CallOptions) *storer {
+// New returns a new pineconevs
+func New(opts ...CallOptions) *pineconevs {
 	o := applyCallOptions(opts, options{
-		namespace: Namespace,
+		namespace: internal.Generate(10),
 	})
-	// TODO we should be able to create a new index if it doesn't exist
 	c, err := pinecone.NewIndexClient(
 		pinecone.WithAPIKey(o.apiKey),
 		pinecone.WithIndexName(o.indexName),
@@ -31,15 +30,22 @@ func NewStorer(opts ...CallOptions) *storer {
 	if err != nil {
 		panic(err)
 	}
-	return &storer{
+	return &pineconevs{
 		client:    c,
 		namespace: o.namespace,
+		DTO: &DTO{
+			ApiKey:      o.apiKey,
+			IndexName:   o.indexName,
+			Namespace:   o.namespace,
+			ProjectName: o.projectName,
+			Environment: o.environment,
+		},
 	}
 }
 
 // StoreVector stores the given Document
 // it attempts to save the metadata
-func (p *storer) StoreVector(doc *types.Document) error {
+func (p *pineconevs) StoreVector(doc *types.Document) error {
 	ctx := context.Background()
 	req := pinecone.UpsertVectorsParams{
 		Vectors: []*pinecone.Vector{
@@ -63,7 +69,7 @@ func (p *storer) StoreVector(doc *types.Document) error {
 }
 
 // QuerySimilarity returns the k most similar documents to the given vector
-func (p *storer) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error) {
+func (p *pineconevs) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error) {
 	ctx := context.Background()
 	req := pinecone.QueryParams{
 		Vector:    vector,
@@ -90,10 +96,18 @@ func (p *storer) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error)
 	return uuids, nil
 }
 
-// Close closes the storer not necessary for pinecone
-func (p *storer) Close() error {
+// Close closes the pineconevs not necessary for pinecone
+func (p *pineconevs) Close() error {
 	return nil
 }
 
-// Ensure that storer implements VectorStorer
-var _ vectorstore.VectorStorer = (*storer)(nil)
+func (p *pineconevs) GetNamespace() string {
+	return p.namespace
+}
+
+func (p *pineconevs) GetDTO() vectorstore.Converter {
+	return p.DTO
+}
+
+// Ensure that pineconevs implements VectorStorer
+var _ vectorstore.VectorStorer = (*pineconevs)(nil)

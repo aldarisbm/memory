@@ -1,4 +1,4 @@
-package sqlite
+package sqliteds
 
 type options struct {
 	path string

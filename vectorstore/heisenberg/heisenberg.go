@@ -1,4 +1,4 @@
-package heisenberg
+package heisenbergvs
 
 import (
 	"github.com/aldarisbm/memory/internal"
@@ -9,12 +9,15 @@ import (
 	"github.com/quantanotes/heisenberg/utils"
 )
 
-type vectorStorer struct {
-	hb         *core.DB
-	collection string
+type heisenberg struct {
+	hb          *core.DB
+	collection  string
+	path        string
+	hasBeenInit bool
+	DTO         *DTO
 }
 
-func New(opts ...CallOptions) *vectorStorer {
+func New(opts ...CallOptions) *heisenberg {
 	o := applyCallOptions(opts, options{
 		collection: "asltm",
 		spaceType:  Cosine,
@@ -23,21 +26,32 @@ func New(opts ...CallOptions) *vectorStorer {
 		panic("dimensions cannot be 0")
 	}
 	if o.path == "" {
-		o.path = internal.CreateFolderInsideMemoryFolder("heisenberg")
+		o.path = internal.CreateFolderInsideMemoryFolder(internal.Generate(10))
 	}
-	heisenberg := core.NewDB(o.path)
-	if err := heisenberg.NewCollection(o.collection, o.dimensions, utils.SpaceType(o.spaceType)); err != nil {
-		panic(err)
+	hb := core.NewDB(o.path)
+	if !o.hasBeenInit {
+		if err := hb.NewCollection(o.collection, uint(o.dimensions), utils.SpaceType(o.spaceType)); err != nil {
+			panic(err)
+		}
 	}
 
-	vs := &vectorStorer{
-		hb:         heisenberg,
-		collection: o.collection,
+	vs := &heisenberg{
+		hb:          hb,
+		collection:  o.collection,
+		path:        o.path,
+		hasBeenInit: true,
+		DTO: &DTO{
+			Dimensions:  o.dimensions,
+			Path:        o.path,
+			SpaceType:   o.spaceType,
+			Collection:  o.collection,
+			HasBeenInit: true,
+		},
 	}
 	return vs
 }
 
-func (h vectorStorer) StoreVector(document *types.Document) error {
+func (h *heisenberg) StoreVector(document *types.Document) error {
 	id := document.ID.String()
 	if err := h.hb.Put(h.collection, id, document.Vector, document.Metadata); err != nil {
 		return err
@@ -45,7 +59,7 @@ func (h vectorStorer) StoreVector(document *types.Document) error {
 	return nil
 }
 
-func (h vectorStorer) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error) {
+func (h *heisenberg) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, error) {
 	entries, err := h.hb.Search(h.collection, vector, int(k))
 	if err != nil {
 		return nil, err
@@ -61,9 +75,13 @@ func (h vectorStorer) QuerySimilarity(vector []float32, k int64) ([]uuid.UUID, e
 	return uuids, nil
 }
 
-func (h vectorStorer) Close() error {
+func (h *heisenberg) Close() error {
 	h.hb.Close()
 	return nil
 }
 
-var _ vectorstore.VectorStorer = (*vectorStorer)(nil)
+func (h *heisenberg) GetDTO() vectorstore.Converter {
+	return h.DTO
+}
+
+var _ vectorstore.VectorStorer = (*heisenberg)(nil)

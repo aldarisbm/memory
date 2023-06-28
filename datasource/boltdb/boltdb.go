@@ -1,4 +1,4 @@
-package boltdb
+package boltds
 
 import (
 	"encoding/json"
@@ -12,29 +12,34 @@ import (
 	"github.com/aldarisbm/memory/types"
 	"github.com/google/uuid"
 	bolt "go.etcd.io/bbolt"
+	"os"
 )
 
-type localStorer struct {
-	db         *bolt.DB
-	bucketName string
+// bucketName is always the same
+const (
+	bucketName = "ltm"
+	mode       = os.ModePerm
+)
+
+type boltds struct {
+	path string
+	db   *bolt.DB
+	DTO  *DTO
 }
 
-// NewLocalStorer returns a new local storer
+// New returns a new local storer
 // if path is empty, it will default to $HOME/memory/boltdb
-func NewLocalStorer(opts ...CallOptions) *localStorer {
-	o := applyCallOptions(opts, options{
-		bucket: "ltm",
-		mode:   0600,
-	})
+func New(opts ...CallOptions) *boltds {
+	o := applyCallOptions(opts)
 	if o.path == "" {
-		o.path = fmt.Sprintf("%s/%s", internal.CreateMemoryFolderInHomeDir(), "boltdb")
+		o.path = fmt.Sprintf("%s/%s", internal.CreateMemoryFolderInHomeDir(), internal.Generate(10))
 	}
-	dbm, err := bolt.Open(o.path, o.mode, nil)
+	dbm, err := bolt.Open(o.path, mode, nil)
 	if err != nil {
 		panic(err)
 	}
 	err = dbm.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists([]byte(o.bucket))
+		_, err := tx.CreateBucketIfNotExists([]byte(bucketName))
 		if err != nil {
 			return err
 		}
@@ -44,23 +49,26 @@ func NewLocalStorer(opts ...CallOptions) *localStorer {
 		panic(err)
 	}
 
-	ls := &localStorer{
-		db:         dbm,
-		bucketName: o.bucket,
+	ls := &boltds{
+		db:   dbm,
+		path: o.path,
+		DTO: &DTO{
+			Path: o.path,
+		},
 	}
 	return ls
 }
 
 // Close closes the local storer
-func (l *localStorer) Close() error {
-	return l.db.Close()
+func (b *boltds) Close() error {
+	return b.db.Close()
 }
 
 // GetDocument returns the document with the given id
-func (l *localStorer) GetDocument(id uuid.UUID) (*types.Document, error) {
+func (b *boltds) GetDocument(id uuid.UUID) (*types.Document, error) {
 	var doc types.Document
-	err := l.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(l.bucketName))
+	err := b.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(bucketName))
 		v := b.Get([]byte(id.String()))
 		err := json.Unmarshal(v, &doc)
 		if err != nil {
@@ -79,10 +87,10 @@ func (l *localStorer) GetDocument(id uuid.UUID) (*types.Document, error) {
 }
 
 // GetDocuments returns the documents with the given ids
-func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*types.Document, error) {
+func (b *boltds) GetDocuments(ids []uuid.UUID) ([]*types.Document, error) {
 	var docs []*types.Document
 	for _, id := range ids {
-		doc, err := l.GetDocument(id)
+		doc, err := b.GetDocument(id)
 		if err != nil {
 			return nil, fmt.Errorf("getting document: %s", err)
 		}
@@ -93,13 +101,13 @@ func (l *localStorer) GetDocuments(ids []uuid.UUID) ([]*types.Document, error) {
 
 // StoreDocument stores the given document
 // We use a k/v store key being uuid and value being []byte of Document
-func (l *localStorer) StoreDocument(document *types.Document) error {
+func (b *boltds) StoreDocument(document *types.Document) error {
 	doc, err := json.Marshal(&document)
 	if err != nil {
 		return fmt.Errorf("marshaling document: %s", err)
 	}
-	err = l.db.Update(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(l.bucketName))
+	err = b.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(bucketName))
 		err := b.Put([]byte(document.ID.String()), doc)
 		return err
 	})
@@ -108,6 +116,7 @@ func (l *localStorer) StoreDocument(document *types.Document) error {
 	}
 	return nil
 }
+
 
 // UpdateLastReadAt updates the last read at timestamp for the given document
 func (l *localStorer) UpdateLastReadAt(doc *types.Document) error {
@@ -121,3 +130,10 @@ func (l *localStorer) UpdateLastReadAt(doc *types.Document) error {
 
 // Ensure localStorer implements DataSourcer
 var _ datasource.DataSourcer = (*localStorer)(nil)
+func (b *boltds) GetDTO() datasource.Converter {
+	return b.DTO
+}
+
+// Ensure boltds implements DataSourcer
+var _ datasource.DataSourcer = (*boltds)(nil)
+

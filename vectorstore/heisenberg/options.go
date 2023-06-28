@@ -1,4 +1,4 @@
-package heisenberg
+package heisenbergvs
 
 type SpaceType int
 
@@ -9,10 +9,11 @@ const (
 )
 
 type options struct {
-	path       string
-	collection string
-	dimensions uint
-	spaceType  SpaceType
+	path        string
+	collection  string
+	dimensions  int
+	spaceType   SpaceType
+	hasBeenInit bool
 }
 
 // CallOptions provides a way to set optional parameters to various methods
@@ -41,7 +42,7 @@ func WithPath(path string) CallOptions {
 	}
 }
 
-func WithDimensions(dimensions uint) CallOptions {
+func WithDimensions(dimensions int) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
 			o.dimensions = dimensions
@@ -61,6 +62,14 @@ func WithCollectionName(collection string) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
 			o.collection = collection
+		},
+	}
+}
+
+func WithHasBeenInit(hasBeenInit bool) CallOptions {
+	return CallOptions{
+		applyFunc: func(o *options) {
+			o.hasBeenInit = hasBeenInit
 		},
 	}
 }

@@ -1,12 +1,9 @@
-package boltdb
-
-import "os"
+package boltds
 
 type options struct {
-	path   string
-	bucket string
-	mode   os.FileMode
+	path string
 }
+
 type CallOptions struct {
 	applyFunc func(o *options)
 }
@@ -28,14 +25,6 @@ func WithPath(path string) CallOptions {
 	return CallOptions{
 		applyFunc: func(o *options) {
 			o.path = path
-		},
-	}
-}
-
-func WithBucket(bucket string) CallOptions {
-	return CallOptions{
-		applyFunc: func(o *options) {
-			o.bucket = bucket
 		},
 	}
 }

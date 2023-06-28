@@ -20,11 +20,11 @@ It's designed with simple interfaces to be easily extended to other vector store
 ```go
 package main
 
-import "github.com/aldarisbm/memory/datasource/sqlite"
+import "github.com/aldarisbm/memory/datasource/sqliteds"
 
 func main() {
 	// can pass options
-	ls := sqlite.NewLocalStorer()
+	ls := sqliteds.NewLocalStorer()
 }
 ```
 
@@ -90,7 +90,7 @@ import (
 func main() {
 	// for this to work you should be running something like
 	// https://github.com/aldarisbm/sentence_transformers locally
-	emb := local.New(local.WithHost("http://127.0.0.1:5000"))
+	emb := local.New(local.WithHost("http://127.0.0.1:5050"))
 	// Uses default SQLite for storage
 	// And default Heisenberg for vector store
 	mem := memory.NewMemory(memory.WithEmbedder(emb))

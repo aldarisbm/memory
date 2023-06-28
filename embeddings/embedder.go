@@ -7,5 +7,13 @@ type Embedder interface {
 	// EmbedDocumentTexts returns the embeddings of the given texts
 	EmbedDocumentTexts(texts []string) ([][]float32, error)
 	// GetDimensions returns the dimensions of the embeddings
-	GetDimensions() uint
+	GetDimensions() int
+
+	// GetDTO returns the DTO of the embedder
+	GetDTO() Converter
+}
+
+type Converter interface {
+	ToEmbedder() Embedder
+	GetType() string
 }

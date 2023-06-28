@@ -1,4 +1,4 @@
-package local
+package localembedder
 
 import (
 	"bytes"
@@ -20,6 +20,7 @@ type embedder struct {
 	host              string
 	embeddingEndpoint string
 	client            *http.Client
+	DTO               *DTO
 }
 
 // New returns a new embedder that uses a local server to embed text
@@ -27,15 +28,21 @@ type embedder struct {
 // https://github.com/aldarisbm/sentence_transformers
 func New(opts ...CallOptions) *embedder {
 	o := applyCallOptions(opts, options{
-		host:              "http://localhost:5000",
+		// listening on 5050 bc apple uses 5000 for AirPlay
+		host:              "http://localhost:5050",
 		embeddingEndpoint: "/embeddings",
 	})
 	return &embedder{
 		host:              o.host,
 		embeddingEndpoint: o.embeddingEndpoint,
 		client:            &http.Client{},
+		DTO: &DTO{
+			Host:              o.host,
+			EmbeddingEndpoint: o.embeddingEndpoint,
+		},
 	}
 }
+
 func (e embedder) EmbedDocumentText(text string) ([]float32, error) {
 	req := request{
 		Text: text,
@@ -70,9 +77,13 @@ func (e embedder) EmbedDocumentTexts(texts []string) ([][]float32, error) {
 	return embs, nil
 }
 
-func (e embedder) GetDimensions() uint {
+func (e embedder) GetDimensions() int {
 	const SentenceTransformersDimensions = 384
 	return SentenceTransformersDimensions
+}
+
+func (e embedder) GetDTO() embeddings.Converter {
+	return e.DTO
 }
 
 var _ embeddings.Embedder = (*embedder)(nil)

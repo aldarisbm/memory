@@ -24,27 +24,44 @@ type Memory struct {
 	cache       map[uuid.UUID]*types.Document
 }
 
-// NewMemory creates or loads a new Memory instance from the given options
-func NewMemory(opts ...CallOptions) *Memory {
+// New creates or loads a new Memory instance from the given options
+func New(name string, opts ...CallOptions) *Memory {
+	if name == "" {
+		panic("name must be provided")
+	}
+	store := getStore()
+	defer store.close()
+	// check if memory exists in store
+	// TODO we might want to check that the vectorstore and embedder are of the same type
+	mem, err := store.getMemoryFromStore(name)
+	if err == nil {
+		return mem
+	}
+
 	o := applyCallOptions(opts, options{
-		datasource: sqlite.NewLocalStorer(),
+		datasource: sqliteds.New(),
 		cacheSize:  CacheSize,
 	})
 	if o.embedder == nil {
 		panic("embedder must be provided")
 	}
 	if o.vectorStore == nil {
-		o.vectorStore = heisenberg.New(
-			heisenberg.WithDimensions(o.embedder.GetDimensions()),
-			heisenberg.WithSpaceType(heisenberg.Cosine),
+		o.vectorStore = heisenbergvs.New(
+			heisenbergvs.WithDimensions(o.embedder.GetDimensions()),
+			heisenbergvs.WithSpaceType(heisenbergvs.Cosine),
 		)
 	}
-	return &Memory{
+	m := &Memory{
 		embedder:    o.embedder,
 		vectorStore: o.vectorStore,
 		datasource:  o.datasource,
 		cache:       make(map[uuid.UUID]*types.Document),
 	}
+
+	if err = store.saveMemoryToStore(name, m); err != nil {
+		panic(err)
+	}
+	return m
 }
 
 // StoreDocument stores a document in the Memory
@@ -113,7 +130,9 @@ func (m *Memory) NewDocument(text string, user string) *types.Document {
 
 // Close closes the Memory
 func (m *Memory) Close() error {
-	return m.datasource.Close()
+	m.datasource.Close()
+	m.vectorStore.Close()
+	return nil
 }
 
 // addToCache adds a document to the cache
