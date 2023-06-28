@@ -4,12 +4,16 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
+	"os"
+	"os/user"
+	"time"
+
 	"github.com/aldarisbm/memory/datasource"
 	"github.com/aldarisbm/memory/internal"
 	"github.com/aldarisbm/memory/types"
 	"github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
 )
 
 type sqliteds struct {
@@ -67,7 +71,10 @@ func (s *sqliteds) GetDocument(id uuid.UUID) (*types.Document, error) {
 	if err := json.Unmarshal(vectorBytes, &doc.Vector); err != nil {
 		return nil, fmt.Errorf("unmarshaling vector: %s", err)
 	}
-
+	err = l.UpdateLastReadAt(&doc)
+	if err != nil {
+		return nil, err
+	}
 	return &doc, nil
 }
 
@@ -113,6 +120,19 @@ func (s *sqliteds) StoreDocument(doc *types.Document) error {
 	return nil
 }
 
+
+// UpdateLastReadAt updates the last read at timestamp for the given document
+func (l *localStorer) UpdateLastReadAt(doc *types.Document) error {
+	if time.Now().After(doc.LastReadAt) {
+		doc.LastReadAt = time.Now() // Update prevTime with the new current time
+	} else {
+		return fmt.Errorf("error in updating LastReadAt time")
+	}
+	return nil
+}
+
+// Ensure localStorer implements DataSourcer
+var _ datasource.DataSourcer = (*localStorer)(nil)
 // GetDTO returns the DTO of the local storer
 func (s *sqliteds) GetDTO() datasource.Converter {
 	return s.DTO
@@ -120,3 +140,4 @@ func (s *sqliteds) GetDTO() datasource.Converter {
 
 // Ensure sqliteds implements DataSourcer
 var _ datasource.DataSourcer = (*sqliteds)(nil)
+

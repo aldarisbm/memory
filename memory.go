@@ -2,6 +2,8 @@ package memory
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/aldarisbm/memory/datasource"
 	"github.com/aldarisbm/memory/datasource/sqlite"
 	"github.com/aldarisbm/memory/embeddings"
@@ -9,7 +11,6 @@ import (
 	"github.com/aldarisbm/memory/vectorstore"
 	"github.com/aldarisbm/memory/vectorstore/heisenberg"
 	"github.com/google/uuid"
-	"time"
 )
 
 // CacheSize is the size of the cache for saving recent documents

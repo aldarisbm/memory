@@ -3,6 +3,10 @@ package boltds
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"os/user"
+	"time"
+
 	"github.com/aldarisbm/memory/datasource"
 	"github.com/aldarisbm/memory/internal"
 	"github.com/aldarisbm/memory/types"
@@ -75,6 +79,10 @@ func (b *boltds) GetDocument(id uuid.UUID) (*types.Document, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = l.UpdateLastReadAt(&doc)
+	if err != nil {
+		return nil, err
+	}
 	return &doc, nil
 }
 
@@ -109,9 +117,23 @@ func (b *boltds) StoreDocument(document *types.Document) error {
 	return nil
 }
 
+
+// UpdateLastReadAt updates the last read at timestamp for the given document
+func (l *localStorer) UpdateLastReadAt(doc *types.Document) error {
+	if time.Now().After(doc.LastReadAt) {
+		doc.LastReadAt = time.Now() // Update prevTime with the new current time
+	} else {
+		return fmt.Errorf("error in updating LastReadAt time")
+	}
+	return nil
+}
+
+// Ensure localStorer implements DataSourcer
+var _ datasource.DataSourcer = (*localStorer)(nil)
 func (b *boltds) GetDTO() datasource.Converter {
 	return b.DTO
 }
 
 // Ensure boltds implements DataSourcer
 var _ datasource.DataSourcer = (*boltds)(nil)
+
